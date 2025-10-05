@@ -14,12 +14,11 @@
     h1 { color: #2c3e50; text-shadow: 2px 2px #ffb3b3; }
     h2 { margin-top: 40px; color: #34495e; text-shadow: 1px 1px #ffe066; }
 
-    /* Floating points overlay */
     #points {
       position: fixed;
       top: 10px;
       left: 10px;
-      background: rgba(255, 200, 200, 0.8);
+      background: rgba(255,200,200,0.8);
       padding: 10px 15px;
       border-radius: 10px;
       font-size: 20px;
@@ -59,11 +58,10 @@
     }
     input { padding: 5px; width: 80px; font-size: 14px; margin-right: 5px; }
 
-    /* Leaderboard overlay */
     #leaderboard {
       position: fixed;
       top: 50px;
-      right: -350px;
+      right: 0;
       width: 300px;
       max-height: 90%;
       overflow-y: auto;
@@ -71,28 +69,15 @@
       box-shadow: -5px 5px 15px rgba(0,0,0,0.3);
       padding: 20px;
       border-radius: 10px 0 0 10px;
-      transition: right 0.3s;
       z-index: 999;
     }
     #leaderboard h3 { margin-top: 0; }
-    #closeLeaderboard, #openLeaderboard {
-      cursor: pointer;
-      font-weight: bold;
-      padding: 5px 10px;
-      border-radius: 5px;
-      background: #e74c3c;
-      color: white;
-      border: none;
-      margin-bottom: 10px;
-    }
-    #openLeaderboard { position: fixed; top: 10px; right: 10px; display:none; }
   </style>
 </head>
 <body>
   <h1>Random Generator Hub</h1>
   <p id="points">Points: 0</p>
 
-  <!-- Generators -->
   <div class="generator">
     <h2>Homework Excuse Generator</h2>
     <button id="excuseBtn" onclick="generateExcuse()">Click me!</button>
@@ -138,7 +123,6 @@
     </div>
   </div>
 
-  <!-- Unlockable Generators -->
   <div class="generator extra" style="display:none;">
     <h2>Name Generator</h2>
     <button class="extraBtn" onclick="generateExtra()">Click me!</button>
@@ -168,109 +152,62 @@
     </div>
   </div>
 
-  <!-- Leaderboard -->
   <div id="leaderboard">
-    <button id="closeLeaderboard" onclick="closeLeaderboard()">X Close</button>
-    <h3>Leaderboard</h3>
+    <h3>Leaderboard (Local Top 20)</h3>
     <div id="leaderboardContent"></div>
   </div>
-  <button id="openLeaderboard" onclick="openLeaderboard()">✅ Open Leaderboard</button>
 
   <script>
-    let points = 0;
-    let playerName = localStorage.getItem('playerName') || "";
+    let points = parseInt(localStorage.getItem('points')) || 0;
+    let playerName = localStorage.getItem('playerName') || "Player";
 
-    // Cycler utility
-    function createCycler(array){
+    const excuses = Array.from({length:50}, (_,i)=>`Excuse ${i+1}`);
+    const gamerTags = Array.from({length:50}, (_,i)=>`Gamer${i+1}`);
+    const roasts = Array.from({length:50}, (_,i)=>`Roast ${i+1}`);
+    const memes = Array.from({length:50}, (_,i)=>`Meme ${i+1}`);
+    const quotes = Array.from({length:50}, (_,i)=>`Quote ${i+1}`);
+    const extraNames = Array.from({length:50}, (_,i)=>`Name${i+1}`);
+    const dares = Array.from({length:50}, (_,i)=>`Dare ${i+1}`);
+
+    function createCycler(arr){
       let used=[];
       return function(){
-        if(used.length===array.length) used=[];
+        if(used.length===arr.length) used=[];
         let i;
-        do{i=Math.floor(Math.random()*array.length);} while(used.includes(i));
+        do{i=Math.floor(Math.random()*arr.length);} while(used.includes(i));
         used.push(i);
-        return array[i];
+        return arr[i];
       }
     }
 
-    // Generator data
-    const excuses=["My dog ate my homework","I left it at home","I overslept","The printer ran out of ink","Alien abduction"];
-    const gamerTags=["ShadowSlayer","MegaNoodle","EpicCat","TurboDestroyer","PixelPunk"];
-    const roasts=["You're like a cloud","You bring everyone down","Your brain called, it wants a break","You have something on your chin… nope, that's your face"];
-    const memes=["When you open the fridge and forget what you wanted","That feeling when WiFi dies mid-game","Me trying to adult"];
-    const quotes=["Believe you can","Even the darkest night will end","Keep going, you're amazing"];
-    const extraNames=["Zypheron","Glumbix","Trillico","Fandor"];
-    const dares=["Do 10 jumping jacks","Sing your favorite song","Hop on one foot 20 times"];
+    const getExcuse = createCycler(excuses);
+    const getGamerTag = createCycler(gamerTags);
+    const getRoast = createCycler(roasts);
+    const getMeme = createCycler(memes);
+    const getQuote = createCycler(quotes);
+    const getExtraName = createCycler(extraNames);
+    const getDare = createCycler(dares);
 
-    // Cyclers
-    const getExcuse=createCycler(excuses);
-    const getGamerTag=createCycler(gamerTags);
-    const getRoast=createCycler(roasts);
-    const getMeme=createCycler(memes);
-    const getQuote=createCycler(quotes);
-    const getExtraName=createCycler(extraNames);
-    const getDare=createCycler(dares);
-
-    // Add points
     function addPoint(){
       points++;
-      document.getElementById("points").innerText="Points: "+points;
+      document.getElementById("points").innerText = "Points: "+points;
+      localStorage.setItem('points', points);
       checkUnlocks();
-      checkMilestone();
-      if(localStorage.getItem('leaderboardUnlocked') && playerName) updateLeaderboard(points);
+      updateLeaderboard();
     }
 
     function checkUnlocks(){
-      const extras=document.querySelectorAll('.extra');
+      const extras = document.querySelectorAll('.extra');
       if(points>=30) extras[0].style.display='block';
       if(points>=60) extras[1].style.display='block';
       if(points>=90) extras[2].style.display='block';
     }
 
-    function checkMilestone(){
-      if(points>=100 && !localStorage.getItem('leaderboardUnlocked')){
-        alert("You're an amazing clicker! 🎉 You have unlocked the leaderboard!");
-        openLeaderboardPrompt();
-      }
-    }
-
     function copyText(id){
-      const text=document.getElementById(id).innerText;
-      navigator.clipboard.writeText(text).then(()=>{alert("Copied!");});
+      const text = document.getElementById(id).innerText;
+      navigator.clipboard.writeText(text).then(()=>alert("Copied!"));
     }
 
-    function openLeaderboardPrompt(){
-      if(!playerName){
-        playerName=prompt("Enter your name for leaderboard:")||"Anonymous";
-        localStorage.setItem('playerName',playerName);
-      }
-      localStorage.setItem('leaderboardUnlocked','true');
-      document.getElementById('openLeaderboard').style.display='block';
-      openLeaderboard();
-      updateLeaderboard(points);
-    }
-
-    function openLeaderboard(){ document.getElementById('leaderboard').style.right='0'; }
-    function closeLeaderboard(){ document.getElementById('leaderboard').style.right='-350px'; }
-
-    function updateLeaderboard(score){
-      let board=JSON.parse(localStorage.getItem('leaderboard')||'[]');
-      let exists=board.find(p=>p.name===playerName);
-      if(exists) exists.score=score;
-      else board.push({name:playerName,score:score});
-      board.sort((a,b)=>b.score-b.score);
-      if(board.length>20) board=board.slice(0,20);
-      localStorage.setItem('leaderboard',JSON.stringify(board));
-      renderLeaderboard(board);
-    }
-
-    function renderLeaderboard(board){
-      let html="<ol>";
-      board.forEach(p=>{ html+=`<li>${p.name}: ${p.score}</li>` });
-      html+="</ol>";
-      document.getElementById('leaderboardContent').innerHTML=html;
-    }
-
-    // Generator functions
     function generateExcuse(){ document.getElementById("excuseOutput").innerText=getExcuse(); addPoint(); }
     function generateGamerTag(){ document.getElementById("gamerTagOutput").innerText=getGamerTag(); addPoint(); }
     function generateRoast(){ document.getElementById("roastOutput").innerText=getRoast(); addPoint(); }
@@ -284,6 +221,27 @@
     }
     function generateDare(){ document.getElementById("dareOutput").innerText=getDare(); addPoint(); }
 
+    function updateLeaderboard(){
+      let board = JSON.parse(localStorage.getItem('leaderboard') || '[]');
+      let exists = board.find(p=>p.name===playerName);
+      if(exists) exists.score = points;
+      else board.push({name: playerName, score: points});
+      board.sort((a,b)=>b.score-b.score);
+      if(board.length>20) board = board.slice(0,20);
+      localStorage.setItem('leaderboard', JSON.stringify(board));
+
+      // render
+      let html = "<ol>";
+      board.forEach(p=>{ html += `<li>${p.name}: ${p.score}</li>` });
+      html += "</ol>";
+      document.getElementById('leaderboardContent').innerHTML = html;
+    }
+
+    window.onload = function(){
+      document.getElementById("points").innerText = "Points: "+points;
+      checkUnlocks();
+      updateLeaderboard();
+    }
   </script>
 </body>
 </html>
