@@ -66,62 +66,66 @@
   <p id="quoteOutput"></p>
 
   <script>
-    // Homework Excuses (random combos)
-    const excuseSubjects = ["My dog","My cat","My goldfish","My hamster","My alien friend","My neighbor"];
-    const excuseVerbs = ["ate","deleted","hid","destroyed","borrowed","crashed"];
-    const excuseObjects = ["my homework","my notes","my project","my essay","my laptop","my binder"];
-    const excuseExtras = ["💀","😭","😱","👽","🚀","😅"];
-    function generateExcuse() {
-      const s = excuseSubjects[Math.floor(Math.random()*excuseSubjects.length)];
-      const v = excuseVerbs[Math.floor(Math.random()*excuseVerbs.length)];
-      const o = excuseObjects[Math.floor(Math.random()*excuseObjects.length)];
-      const e = excuseExtras[Math.floor(Math.random()*excuseExtras.length)];
-      document.getElementById("excuseOutput").innerText = `${s} ${v} ${o} ${e}`;
+    // Helper function for cycling
+    function createCycler(array) {
+      let used = [];
+      return function() {
+        if (used.length === array.length) used = [];
+        let i;
+        do {
+          i = Math.floor(Math.random()*array.length);
+        } while (used.includes(i));
+        used.push(i);
+        return array[i];
+      }
     }
+
+    // Homework Excuses
+    const excuses = [
+      "My dog ate my homework 💀",
+      "I left it at home 😭",
+      "My computer crashed 😱",
+      "I was sick 🤒",
+      "It got wet in the rain ☔",
+      "My cat hid it 🐱",
+      "I forgot to do it 💀",
+      "I overslept 😴",
+      "My printer ran out of ink 🖨️",
+      "I spilled juice on it 🧃",
+      "It got stuck in my backpack 🎒",
+      "My little brother shredded it 😬",
+      "I left it on the bus 🚌",
+      "I accidentally deleted it 💻",
+      "It got lost in the park 🌳",
+      "I was abducted by aliens 👽",
+      "I did it but left it at school 🏫",
+      "I was helping my mom 🍳",
+      "My dog buried it 🐕",
+      "I thought it was due tomorrow 😭",
+      "I did it on another planet 🚀",
+      "My homework caught fire 🔥",
+      "I gave it to the wrong teacher 😅",
+      "I left it in the locker 🗄️",
+      "I dropped it in the toilet 🚽",
+      "It disappeared mysteriously 👀",
+      "I did it but it got eaten by a dragon 🐉",
+      "I lent it to a friend and they lost it 😬",
+      "My homework turned into a frog 🐸",
+      "I was too busy saving the world 🌎"
+    ];
+    const getExcuse = createCycler(excuses);
+    function generateExcuse() { document.getElementById("excuseOutput").innerText = getExcuse(); }
 
     // Gamer Tags
-    const gamerPrefixes = ["Shadow","Mega","Epic","Turbo","Pixel","Silent","Crazy","Ghost","Dragon","Neo"];
-    const gamerSuffixes = ["Slayer","Noodle","Cat","Destroyer","Punk","Muffin","Wizard","Knight","Wolf","Ninja"];
-    function generateGamerTag() {
-      const p = gamerPrefixes[Math.floor(Math.random()*gamerPrefixes.length)];
-      const s = gamerSuffixes[Math.floor(Math.random()*gamerSuffixes.length)];
-      document.getElementById("gamerTagOutput").innerText = `${p}${s}${Math.floor(Math.random()*999)}`;
-    }
-
-    // Roasts
-    const roastStarts = ["You're like a cloud.","You're proof","You're like a software update.","You bring","Your secrets","You remind me"];
-    const roastEnds = ["When you disappear, it’s a beautiful day 😏","Even mistakes can exist 😎","Whenever I see you, I think 'Not now' 💀","Everyone so much joy when you leave 😬","Are safe with me, I never listened 😏","Of a broken pencil… pointless 😂"];
-    function generateRoast() {
-      const s = roastStarts[Math.floor(Math.random()*roastStarts.length)];
-      const e = roastEnds[Math.floor(Math.random()*roastEnds.length)];
-      document.getElementById("roastOutput").innerText = `${s} ${e}`;
-    }
-
-    // Meme Captions
-    const memeStarts = ["When you open the fridge","That feeling when WiFi dies","Me trying to sleep early","POV: You see your crush","Trying to adult like","When the teacher says 'pair up'"];
-    const memeEnds = ["and forget what you wanted 😅","mid-game 💀","but still scrolling at 3 AM 😂","and panic 😱","and fail 😬","and everyone looks at you 😭"];
-    function generateMeme() {
-      const s = memeStarts[Math.floor(Math.random()*memeStarts.length)];
-      const e = memeEnds[Math.floor(Math.random()*memeEnds.length)];
-      document.getElementById("memeOutput").innerText = `${s} ${e}`;
-    }
-
-    // Motivational Quotes (full sentences)
-    const quotes = [
-      "Believe you can and you're halfway there 💪",
-      "Even the darkest night will end and the sun will rise 🌞",
-      "Mistakes are proof that you are trying ✨",
-      "Stay positive, work hard, make it happen 💯",
-      "Dream big, start small, act now 🚀",
-      "You are stronger than you think 🦾"
+    const gamerTags = [
+      "ShadowSlayer", "MegaNoodle", "EpicCat", "TurboDestroyer", "PixelPunk",
+      "SilentMuffin", "CrazyWizard", "GhostKnight", "DragonWolf", "NeoNinja",
+      "FireLord", "IceQueen", "StormBreaker", "RocketMaster", "LunarWolf",
+      "PixelHunter", "TurboTiger", "ShadowHunter", "MegaDragon", "EpicWizard",
+      "GhostSlayer", "SilentShadow", "CrazyTiger", "PixelKnight", "DragonLord",
+      "TurboWolf", "NeoWizard", "FireKnight", "IceSlayer", "StormPunk"
     ];
-    function generateQuote() {
-      const i = Math.floor(Math.random()*quotes.length);
-      document.getElementById("quoteOutput").innerText = quotes[i];
-    }
-  </script>
-</body>
-</html>
+    const getGamerTag = createCycler(gamerTags);
+    function generateGamerTag() { document.getElementById("gamerTagOutput").innerText = getGamerTag(); }
 
-
-
+    // R
