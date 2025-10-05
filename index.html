@@ -92,7 +92,7 @@
   <h1>Random Generator Hub</h1>
   <p id="points">Points: 0</p>
 
-  <!-- Main Generators -->
+  <!-- Generators -->
   <div class="generator">
     <h2>Homework Excuse Generator</h2>
     <button id="excuseBtn" onclick="generateExcuse()">Click me!</button>
@@ -151,7 +151,7 @@
   <div class="generator extra" style="display:none;">
     <h2>Number Generator</h2>
     <p>Enter max number:</p>
-    <input type="number" id="maxNumber" placeholder="e.g., 100">
+    <input type="number" id="maxNumber" placeholder="100">
     <button class="extraBtn" onclick="generateSuper()">Click me!</button>
     <div class="output-container">
       <p id="superOutput"></p>
@@ -180,78 +180,7 @@
     let points = 0;
     let playerName = localStorage.getItem('playerName') || "";
 
-    // Utilities
-    function addPoint() {
-      points++;
-      document.getElementById("points").innerText = "Points: " + points;
-      checkUnlocks();
-      checkMilestone();
-
-      // Update leaderboard if unlocked
-      if(localStorage.getItem('leaderboardUnlocked') && playerName) {
-        updateLeaderboard(points);
-      }
-    }
-
-    function checkUnlocks() {
-      const extras = document.querySelectorAll('.extra');
-      if(points >= 30) extras[0].style.display = 'block';
-      if(points >= 60) extras[1].style.display = 'block';
-      if(points >= 90) extras[2].style.display = 'block';
-    }
-
-    function checkMilestone() {
-      if(points >= 100 && !localStorage.getItem('leaderboardUnlocked')) {
-        alert("You're an amazing clicker! 🎉 You have unlocked the leaderboard!");
-        openLeaderboardPrompt();
-      }
-    }
-
-    function copyText(id) {
-      const text = document.getElementById(id).innerText;
-      navigator.clipboard.writeText(text).then(()=>{alert("Copied!");});
-    }
-
-    // Leaderboard functions
-    function openLeaderboardPrompt() {
-      if(!playerName) {
-        playerName = prompt("Enter your name for the leaderboard:") || "Anonymous";
-        localStorage.setItem('playerName', playerName);
-      }
-      localStorage.setItem('leaderboardUnlocked','true');
-      document.getElementById('openLeaderboard').style.display = 'block';
-      openLeaderboard();
-      updateLeaderboard(points);
-    }
-
-    function openLeaderboard() {
-      document.getElementById('leaderboard').style.right = '0';
-    }
-    function closeLeaderboard() {
-      document.getElementById('leaderboard').style.right = '-350px';
-    }
-
-    function updateLeaderboard(score) {
-      let board = JSON.parse(localStorage.getItem('leaderboard')||'[]');
-      let exists = board.find(p=>p.name===playerName);
-      if(exists) exists.score = score;
-      else board.push({name: playerName, score: score});
-      board.sort((a,b)=>b.score-a.score);
-      if(board.length>20) board = board.slice(0,20);
-      localStorage.setItem('leaderboard', JSON.stringify(board));
-      renderLeaderboard(board);
-    }
-
-    function renderLeaderboard(board) {
-      let html = "<ol>";
-      board.forEach(player => {
-        html += `<li>${player.name}: ${player.score}</li>`;
-      });
-      html += "</ol>";
-      document.getElementById('leaderboardContent').innerHTML = html;
-    }
-
-    // Cycler function for no repeats until all used
+    // Cycler utility
     function createCycler(array){
       let used=[];
       return function(){
@@ -263,41 +192,95 @@
       }
     }
 
-    // --- Generators ---
-    const excuses = ["My dog ate my homework 💀","I left it at home 😭","I was sick 🤒","My cat hid it 🐱","I overslept 😴","The printer ran out of ink 🖨️","I got stuck in traffic 🚗","I had a dentist appointment 🦷","My WiFi was down 📶","I thought it was due next week 🗓️","My little brother drew on it 🎨","I spilled juice on it 🧃","Alien abduction 👽","Time travel messed up my schedule ⏳","I was abducted by a wizard 🧙‍♂️","I had to walk my goldfish 🐟","I got lost in my closet 🧦","Homework evaporated 💨","I was writing in invisible ink 🖊️","I joined a ninja mission 🥷","Homework was too spicy 🌶️","My parrot ate it 🦜","I was trapped in a video game 🎮","I got stuck in a pile of leaves 🍂","The dog hid it under the couch 🐶","I got abducted by homework police 👮","It turned into a pumpkin 🎃","I was busy being a superhero 🦸","Homework turned into spaghetti 🍝","My pencil ran away ✏️"];
-
-    const gamerTags = ["ShadowSlayer","MegaNoodle","EpicCat","TurboDestroyer","PixelPunk","GhostRider","FluffyDragon","CyberNinja","LaserWolf","IcePhoenix","DarkSorcerer","FrostByte","NeonTiger","QuantumDuck","BlazeFalcon","PixelWizard","VortexKnight","StormEagle","RocketHamster","MysticOtter","OmegaViper","LunarFox","GalaxyLion","CyberShark","ThunderBear","CrimsonWolf","ElectricRabbit","ShadowFang","SolarHawk","PhantomTiger"];
-
-    const roasts = ["You're like a cloud 😏","You're proof mistakes exist 😎","You bring everyone down 😂","Your brain called, it wants a break 🧠","You're like a software bug 🐛","You have something on your chin… nope, that's your face 😬","You're the human version of a typo ✍️","You make onions cry 😢","You're like a cloud of confusion ☁️","Your WiFi is stronger than your arguments 📶","You bring the chaos 🌪️","Your jokes are lagging 🐢","You're a loading screen forever ⏳","You're an error 404 🤷","Your vibes are buffering 🌀","You have the charisma of a potato 🥔","You break the fun meter 🔧","You make Mondays jealous 😒","You're a pop-up ad nobody wants 🚫","You have the energy of a snail 🐌","You confuse physics 🤯","You're the human snooze button 😴","Your humor needs a patch 🛠️","You're like decaf coffee ☕","You crash parties like software 💥","You're the missing semicolon ;","Your aura is buffering 🌀","You're a pixelated disaster 🖼️","You lag behind in style 👟","You make clouds frown ☁️"];
-
-    const memes = ["When you open the fridge and forget what you wanted 😅","That feeling when WiFi dies mid-game 💀","When your phone dies at 1% 🔋","When you walk into a room and forget why 🚪","Trying to diet and see pizza 🍕","When autocorrect ruins your life 🤖","Me trying to adult 😩","When Netflix asks if you're still watching 📺","When your headphones tangle themselves 🎧","When the snack is gone before you reach it 🍪","That awkward silence 😳","Me vs my responsibilities 😬","When you spill water on your laptop 💦","When the teacher says 'group project' 📝","Me staring at the ceiling at 3am 🌙","When someone eats your leftovers 🍱","When your plan fails spectacularly 💥","When your crush smiles 😍","When autocorrect changes 'love' to 'loaf' 🍞","Trying to be productive… fails 😴","When the power goes out ⚡","When you step on a Lego 🦶","When memes are too real 😂","Me pretending to listen 👂","When the text sends before you finish typing ✉️","When your pet ignores you 🐶","When you find money in your pocket 💰","When you overcook instant noodles 🍜","That Monday mood 😑","When your alarm doesn't go off ⏰"];
-
-    const quotes = ["Believe you can 💪","Even the darkest night will end 🌞","Keep going, you're amazing ✨","Dream big, act bigger 🌟","Mistakes are proof you're trying 🙌","Stay weird 😎","Be the energy you want to attract ⚡","Progress, not perfection 🔥","Good vibes only ✌️","Shine bright like a diamond 💎","Life is short, smile 😁","You are enough 💖","Hustle in silence, let success make noise 🔊","Stay humble, work hard 🌱","Stars can't shine without darkness 🌌","Positive mind, positive vibes 💭","Chase dreams, not people 🏃‍♂️","You got this 💪","Turn setbacks into comebacks 🔄","Be fearless 🦁","Smile at the little things 😊","Work until your idols become rivals ⚔️","Stay golden 🌟","Be kind, it costs nothing 💛","Believe in miracles ✨","Your vibe attracts your tribe 🌈","Keep pushing 🚀","The best view comes after the hardest climb 🏔️","Life's a journey, enjoy the ride 🛤️","Success loves speed ⚡"];
-
-    const extraNames = ["Zypheron","Glumbix","Trillico","Fandor","Wobblex","Varkon","Mynthra","Plorix","Quizzle","Drimble","Nimblo","Zarvox","Fentura","Klypto","Vandor","Ryntex","Blorion","Squimble","Trellex","Glimthor","Xandor","Plytra","Zomble","Crivix","Fyntra","Jorvik","Lumino","Brixor","Tandor","Wexlin"];
-
-    const dares = ["Do 10 jumping jacks","Sing your favorite song in a funny voice","Balance a spoon on your nose for 10s","Hop on one foot 20 times","Dance like a robot for 30s","Say a tongue twister 3 times fast","Make a funny face for 5s","Pretend to be a superhero for 15s","Draw a mustache on paper and wear it","Make up a silly handshake","Act like a cat for 10s","Spin in a circle 5 times","Do an impression of your favorite celebrity","Touch your toes 10 times","Do a silly walk across the room","Recite the alphabet backwards","Make up a 5-second song","Pretend to drum on a table","Balance a book on your head","Hop like a frog 10 times","Draw a smiley face on your hand","Speak in a robot voice for 15s","Do a funny dance move","Say 'hello' in 5 different accents","Clap your hands 20 times","Act like a zombie for 10s","Pretend to be a pirate","Make a silly face and wink","Do a jumping pose for a photo","Pretend to juggle invisible balls"];
+    // Generator data
+    const excuses=["My dog ate my homework","I left it at home","I overslept","The printer ran out of ink","Alien abduction"];
+    const gamerTags=["ShadowSlayer","MegaNoodle","EpicCat","TurboDestroyer","PixelPunk"];
+    const roasts=["You're like a cloud","You bring everyone down","Your brain called, it wants a break","You have something on your chin… nope, that's your face"];
+    const memes=["When you open the fridge and forget what you wanted","That feeling when WiFi dies mid-game","Me trying to adult"];
+    const quotes=["Believe you can","Even the darkest night will end","Keep going, you're amazing"];
+    const extraNames=["Zypheron","Glumbix","Trillico","Fandor"];
+    const dares=["Do 10 jumping jacks","Sing your favorite song","Hop on one foot 20 times"];
 
     // Cyclers
-    const getExcuse = createCycler(excuses);
-    const getGamerTag = createCycler(gamerTags);
-    const getRoast = createCycler(roasts);
-    const getMeme = createCycler(memes);
-    const getQuote = createCycler(quotes);
-    const getExtraName = createCycler(extraNames);
-    const getDare = createCycler(dares);
+    const getExcuse=createCycler(excuses);
+    const getGamerTag=createCycler(gamerTags);
+    const getRoast=createCycler(roasts);
+    const getMeme=createCycler(memes);
+    const getQuote=createCycler(quotes);
+    const getExtraName=createCycler(extraNames);
+    const getDare=createCycler(dares);
 
-    // Generate functions
+    // Add points
+    function addPoint(){
+      points++;
+      document.getElementById("points").innerText="Points: "+points;
+      checkUnlocks();
+      checkMilestone();
+      if(localStorage.getItem('leaderboardUnlocked') && playerName) updateLeaderboard(points);
+    }
+
+    function checkUnlocks(){
+      const extras=document.querySelectorAll('.extra');
+      if(points>=30) extras[0].style.display='block';
+      if(points>=60) extras[1].style.display='block';
+      if(points>=90) extras[2].style.display='block';
+    }
+
+    function checkMilestone(){
+      if(points>=100 && !localStorage.getItem('leaderboardUnlocked')){
+        alert("You're an amazing clicker! 🎉 You have unlocked the leaderboard!");
+        openLeaderboardPrompt();
+      }
+    }
+
+    function copyText(id){
+      const text=document.getElementById(id).innerText;
+      navigator.clipboard.writeText(text).then(()=>{alert("Copied!");});
+    }
+
+    function openLeaderboardPrompt(){
+      if(!playerName){
+        playerName=prompt("Enter your name for leaderboard:")||"Anonymous";
+        localStorage.setItem('playerName',playerName);
+      }
+      localStorage.setItem('leaderboardUnlocked','true');
+      document.getElementById('openLeaderboard').style.display='block';
+      openLeaderboard();
+      updateLeaderboard(points);
+    }
+
+    function openLeaderboard(){ document.getElementById('leaderboard').style.right='0'; }
+    function closeLeaderboard(){ document.getElementById('leaderboard').style.right='-350px'; }
+
+    function updateLeaderboard(score){
+      let board=JSON.parse(localStorage.getItem('leaderboard')||'[]');
+      let exists=board.find(p=>p.name===playerName);
+      if(exists) exists.score=score;
+      else board.push({name:playerName,score:score});
+      board.sort((a,b)=>b.score-b.score);
+      if(board.length>20) board=board.slice(0,20);
+      localStorage.setItem('leaderboard',JSON.stringify(board));
+      renderLeaderboard(board);
+    }
+
+    function renderLeaderboard(board){
+      let html="<ol>";
+      board.forEach(p=>{ html+=`<li>${p.name}: ${p.score}</li>` });
+      html+="</ol>";
+      document.getElementById('leaderboardContent').innerHTML=html;
+    }
+
+    // Generator functions
     function generateExcuse(){ document.getElementById("excuseOutput").innerText=getExcuse(); addPoint(); }
     function generateGamerTag(){ document.getElementById("gamerTagOutput").innerText=getGamerTag(); addPoint(); }
     function generateRoast(){ document.getElementById("roastOutput").innerText=getRoast(); addPoint(); }
     function generateMeme(){ document.getElementById("memeOutput").innerText=getMeme(); addPoint(); }
     function generateQuote(){ document.getElementById("quoteOutput").innerText=getQuote(); addPoint(); }
     function generateExtra(){ document.getElementById("extraOutput").innerText=getExtraName(); addPoint(); }
-    function generateSuper(){ 
-      let max = parseInt(document.getElementById("maxNumber").value) || 100;
-      document.getElementById("superOutput").innerText=Math.floor(Math.random()*max)+1; 
-      addPoint(); 
+    function generateSuper(){
+      let max=parseInt(document.getElementById("maxNumber").value)||100;
+      document.getElementById("superOutput").innerText=Math.floor(Math.random()*max)+1;
+      addPoint();
     }
     function generateDare(){ document.getElementById("dareOutput").innerText=getDare(); addPoint(); }
 
