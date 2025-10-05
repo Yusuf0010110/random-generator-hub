@@ -15,16 +15,10 @@
     h2 { margin-top: 40px; color: #34495e; text-shadow: 1px 1px #ffe066; }
     #points { font-size: 20px; margin-bottom: 20px; color: #e67e22; }
 
-    .generator-container {
-      margin-bottom: 30px;
-      display: inline-block;
-      text-align: left;
-    }
-
     button {
-      margin: 5px;
-      padding: 10px 20px;
-      font-size: 14px;
+      margin: 10px;
+      padding: 12px 25px;
+      font-size: 16px;
       cursor: pointer;
       border-radius: 10px;
       border: none;
@@ -40,34 +34,38 @@
     #memeBtn { background: #9b59b6; }
     #quoteBtn { background: #3498db; }
     .extraBtn { background: #f39c12; }
+    .copyBtn { background: #2ecc71; font-size: 12px; margin-left: 10px; }
+
+    .generator {
+      margin-bottom: 30px;
+    }
 
     .output-container {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-top: 5px;
+      margin-top: 10px;
     }
 
     .output-container p {
-      min-width: 300px;
+      display: inline-block;
       font-weight: bold;
       font-size: 16px;
       color: #e74c3c;
+      min-width: 300px;
     }
 
-    .copyBtn {
-      margin-left: 10px;
-      background: #2ecc71;
-      font-size: 12px;
+    input {
+      padding: 5px;
+      width: 80px;
+      font-size: 14px;
+      margin-right: 5px;
     }
-
   </style>
 </head>
 <body>
   <h1>Random Generator Hub</h1>
   <p id="points">Points: 0</p>
 
-  <div class="generator-container">
+  <!-- Main generators -->
+  <div class="generator">
     <h2>Homework Excuse Generator</h2>
     <button id="excuseBtn" onclick="generateExcuse()">Click me!</button>
     <div class="output-container">
@@ -76,7 +74,7 @@
     </div>
   </div>
 
-  <div class="generator-container">
+  <div class="generator">
     <h2>Gamer Tag Generator</h2>
     <button id="gamerTagBtn" onclick="generateGamerTag()">Click me!</button>
     <div class="output-container">
@@ -85,7 +83,7 @@
     </div>
   </div>
 
-  <div class="generator-container">
+  <div class="generator">
     <h2>Funny Roast Generator</h2>
     <button id="roastBtn" onclick="generateRoast()">Click me!</button>
     <div class="output-container">
@@ -94,7 +92,7 @@
     </div>
   </div>
 
-  <div class="generator-container">
+  <div class="generator">
     <h2>Random Meme Caption</h2>
     <button id="memeBtn" onclick="generateMeme()">Click me!</button>
     <div class="output-container">
@@ -103,7 +101,7 @@
     </div>
   </div>
 
-  <div class="generator-container">
+  <div class="generator">
     <h2>Motivational Quote Generator</h2>
     <button id="quoteBtn" onclick="generateQuote()">Click me!</button>
     <div class="output-container">
@@ -112,18 +110,21 @@
     </div>
   </div>
 
-  <div class="generator-container extraBtnContainer" style="display:none;">
-    <h2>Extra Special Generator</h2>
-    <button class="extraBtn" id="extraBtn" onclick="generateExtra()">Click me!</button>
+  <!-- Unlockable generators -->
+  <div class="generator extra" style="display:none;">
+    <h2>Extra Special Generator (Made-up Names)</h2>
+    <button class="extraBtn" onclick="generateExtra()">Click me!</button>
     <div class="output-container">
       <p id="extraOutput"></p>
       <button class="copyBtn" onclick="copyText('extraOutput')">Copy</button>
     </div>
   </div>
 
-  <div class="generator-container extraBtnContainer" style="display:none;">
-    <h2>Super Fun Generator</h2>
-    <button class="extraBtn" id="superBtn" onclick="generateSuper()">Click me!</button>
+  <div class="generator extra" style="display:none;">
+    <h2>Super Fun Generator (Random Number)</h2>
+    <p>Enter max number:</p>
+    <input type="number" id="maxNumber" placeholder="e.g., 100">
+    <button class="extraBtn" onclick="generateSuper()">Click me!</button>
     <div class="output-container">
       <p id="superOutput"></p>
       <button class="copyBtn" onclick="copyText('superOutput')">Copy</button>
@@ -140,12 +141,9 @@
     }
 
     function checkUnlocks() {
-      if (points >= 30) {
-        document.querySelectorAll('.extraBtnContainer')[0].style.display = 'inline-block';
-      }
-      if (points >= 60) {
-        document.querySelectorAll('.extraBtnContainer')[1].style.display = 'inline-block';
-      }
+      const extras = document.querySelectorAll('.extra');
+      if(points >= 30) extras[0].style.display = 'block';
+      if(points >= 60) extras[1].style.display = 'block';
     }
 
     function copyText(id) {
@@ -165,21 +163,22 @@
       }
     }
 
+    // Main generator content
     const excuses = ["My dog ate my homework 💀","I left it at home 😭","I was sick 🤒"];
     const gamerTags = ["ShadowSlayer","MegaNoodle","EpicCat"];
     const roasts = ["You're like a cloud 😏","You're proof mistakes exist 😎"];
     const memes = ["When you open the fridge and forget 😅","That feeling when WiFi dies 💀"];
     const quotes = ["Believe you can 💪","Even the darkest night will end 🌞"];
-    const extra = ["Secret unlocked! 🎉","Extra funny content 😎"];
-    const superFun = ["Mega secret generator! 🌟","Ultimate fun 😜"];
 
+    // Extra Special Generator (made-up names)
+    const extraNames = ["Zypheron","Glumbix","Trillico","Fandor","Wobblex","Varkon","Mynthra","Plorix","Quizzle","Drimble"];
+    
     const getExcuse = createCycler(excuses);
     const getGamerTag = createCycler(gamerTags);
     const getRoast = createCycler(roasts);
     const getMeme = createCycler(memes);
     const getQuote = createCycler(quotes);
-    const getExtra = createCycler(extra);
-    const getSuper = createCycler(superFun);
+    const getExtra = createCycler(extraNames);
 
     function generateExcuse() { addPoint(); document.getElementById("excuseOutput").innerText = getExcuse(); }
     function generateGamerTag() { addPoint(); document.getElementById("gamerTagOutput").innerText = getGamerTag(); }
@@ -187,7 +186,16 @@
     function generateMeme() { addPoint(); document.getElementById("memeOutput").innerText = getMeme(); }
     function generateQuote() { addPoint(); document.getElementById("quoteOutput").innerText = getQuote(); }
     function generateExtra() { document.getElementById("extraOutput").innerText = getExtra(); }
-    function generateSuper() { document.getElementById("superOutput").innerText = getSuper(); }
+
+    function generateSuper() {
+      const max = parseInt(document.getElementById('maxNumber').value);
+      if (!max || max <= 0) {
+        document.getElementById('superOutput').innerText = "Enter a valid max number! 💀";
+        return;
+      }
+      const randNum = Math.floor(Math.random() * max) + 1;
+      document.getElementById('superOutput').innerText = "Random number: " + randNum;
+    }
   </script>
 </body>
 </html>
