@@ -8,28 +8,37 @@
       font-family: Arial, sans-serif;
       text-align: center;
       padding: 50px;
-      background: linear-gradient(to bottom, #ffe6f2, #cce0ff);
+      background: linear-gradient(135deg, #ffe6f2, #cce0ff, #d5ffcc);
       color: #333;
     }
-    h1 { color: #2c3e50; }
-    h2 { margin-top: 40px; color: #34495e; }
+    h1 { color: #2c3e50; text-shadow: 2px 2px #ffb3b3; }
+    h2 { margin-top: 40px; color: #34495e; text-shadow: 1px 1px #ffe066; }
+
     button {
       margin: 10px;
-      padding: 10px 25px;
+      padding: 12px 25px;
       font-size: 16px;
       cursor: pointer;
       border-radius: 10px;
       border: none;
-      background: linear-gradient(to right, #ff6b6b, #f7d794);
       color: white;
-      transition: background 0.3s;
+      font-weight: bold;
+      transition: transform 0.2s, box-shadow 0.2s;
     }
-    button:hover { background: linear-gradient(to right, #f7d794, #ff6b6b); }
+    button:hover { transform: scale(1.05); box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+
+    #excuseBtn { background: #ff6b6b; }
+    #gamerTagBtn { background: #1abc9c; }
+    #roastBtn { background: #e67e22; }
+    #memeBtn { background: #9b59b6; }
+    #quoteBtn { background: #3498db; }
+
     p {
       font-weight: bold;
       margin-top: 15px;
       font-size: 18px;
       color: #e74c3c;
+      min-height: 24px;
     }
   </style>
 </head>
@@ -37,32 +46,31 @@
   <h1>Random Generator Hub</h1>
 
   <h2>Homework Excuse Generator</h2>
-  <button onclick="generateExcuse()">Click me!</button>
+  <button id="excuseBtn" onclick="generateExcuse()">Click me!</button>
   <p id="excuseOutput"></p>
 
   <h2>Gamer Tag Generator</h2>
-  <button onclick="generateGamerTag()">Click me!</button>
+  <button id="gamerTagBtn" onclick="generateGamerTag()">Click me!</button>
   <p id="gamerTagOutput"></p>
 
   <h2>Funny Roast Generator</h2>
-  <button onclick="generateRoast()">Click me!</button>
+  <button id="roastBtn" onclick="generateRoast()">Click me!</button>
   <p id="roastOutput"></p>
 
   <h2>Random Meme Caption</h2>
-  <button onclick="generateMeme()">Click me!</button>
+  <button id="memeBtn" onclick="generateMeme()">Click me!</button>
   <p id="memeOutput"></p>
 
   <h2>Motivational Quote Generator</h2>
-  <button onclick="generateQuote()">Click me!</button>
+  <button id="quoteBtn" onclick="generateQuote()">Click me!</button>
   <p id="quoteOutput"></p>
 
   <script>
-    // Homework Excuses
-    const excuseSubjects = ["My dog", "My cat", "My goldfish", "My hamster", "My alien friend", "My neighbor"];
-    const excuseVerbs = ["ate", "deleted", "hid", "destroyed", "borrowed", "crashed"];
-    const excuseObjects = ["my homework", "my notes", "my project", "my essay", "my laptop", "my binder"];
+    // Homework Excuses (random combos)
+    const excuseSubjects = ["My dog","My cat","My goldfish","My hamster","My alien friend","My neighbor"];
+    const excuseVerbs = ["ate","deleted","hid","destroyed","borrowed","crashed"];
+    const excuseObjects = ["my homework","my notes","my project","my essay","my laptop","my binder"];
     const excuseExtras = ["💀","😭","😱","👽","🚀","😅"];
-
     function generateExcuse() {
       const s = excuseSubjects[Math.floor(Math.random()*excuseSubjects.length)];
       const v = excuseVerbs[Math.floor(Math.random()*excuseVerbs.length)];
@@ -98,16 +106,22 @@
       document.getElementById("memeOutput").innerText = `${s} ${e}`;
     }
 
-    // Motivational Quotes
-    const quoteStarts = ["Believe you can","Even the darkest night","Mistakes are proof","Stay positive","Dream big","You are stronger"];
-    const quoteMids = ["and you're halfway there 💪","will end and the sun will rise 🌞","that you are trying ✨","work hard, make it happen 💯","start small, act now 🚀","than you think 🦾"];
+    // Motivational Quotes (full sentences)
+    const quotes = [
+      "Believe you can and you're halfway there 💪",
+      "Even the darkest night will end and the sun will rise 🌞",
+      "Mistakes are proof that you are trying ✨",
+      "Stay positive, work hard, make it happen 💯",
+      "Dream big, start small, act now 🚀",
+      "You are stronger than you think 🦾"
+    ];
     function generateQuote() {
-      const s = quoteStarts[Math.floor(Math.random()*quoteStarts.length)];
-      const m = quoteMids[Math.floor(Math.random()*quoteMids.length)];
-      document.getElementById("quoteOutput").innerText = `${s}, ${m}`;
+      const i = Math.floor(Math.random()*quotes.length);
+      document.getElementById("quoteOutput").innerText = quotes[i];
     }
   </script>
 </body>
 </html>
+
 
 
