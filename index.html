@@ -13,11 +13,18 @@
     }
     h1 { color: #2c3e50; text-shadow: 2px 2px #ffb3b3; }
     h2 { margin-top: 40px; color: #34495e; text-shadow: 1px 1px #ffe066; }
+    #points { font-size: 20px; margin-bottom: 20px; color: #e67e22; }
+
+    .generator-container {
+      margin-bottom: 30px;
+      display: inline-block;
+      text-align: left;
+    }
 
     button {
-      margin: 10px;
-      padding: 12px 25px;
-      font-size: 16px;
+      margin: 5px;
+      padding: 10px 20px;
+      font-size: 14px;
       cursor: pointer;
       border-radius: 10px;
       border: none;
@@ -32,128 +39,155 @@
     #roastBtn { background: #e67e22; }
     #memeBtn { background: #9b59b6; }
     #quoteBtn { background: #3498db; }
+    .extraBtn { background: #f39c12; }
 
-    p {
-      font-weight: bold;
-      margin-top: 15px;
-      font-size: 18px;
-      color: #e74c3c;
-      min-height: 24px;
+    .output-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 5px;
     }
+
+    .output-container p {
+      min-width: 300px;
+      font-weight: bold;
+      font-size: 16px;
+      color: #e74c3c;
+    }
+
+    .copyBtn {
+      margin-left: 10px;
+      background: #2ecc71;
+      font-size: 12px;
+    }
+
   </style>
 </head>
 <body>
   <h1>Random Generator Hub</h1>
+  <p id="points">Points: 0</p>
 
-  <h2>Homework Excuse Generator</h2>
-  <button id="excuseBtn" onclick="generateExcuse()">Click me!</button>
-  <p id="excuseOutput"></p>
+  <div class="generator-container">
+    <h2>Homework Excuse Generator</h2>
+    <button id="excuseBtn" onclick="generateExcuse()">Click me!</button>
+    <div class="output-container">
+      <p id="excuseOutput"></p>
+      <button class="copyBtn" onclick="copyText('excuseOutput')">Copy</button>
+    </div>
+  </div>
 
-  <h2>Gamer Tag Generator</h2>
-  <button id="gamerTagBtn" onclick="generateGamerTag()">Click me!</button>
-  <p id="gamerTagOutput"></p>
+  <div class="generator-container">
+    <h2>Gamer Tag Generator</h2>
+    <button id="gamerTagBtn" onclick="generateGamerTag()">Click me!</button>
+    <div class="output-container">
+      <p id="gamerTagOutput"></p>
+      <button class="copyBtn" onclick="copyText('gamerTagOutput')">Copy</button>
+    </div>
+  </div>
 
-  <h2>Funny Roast Generator</h2>
-  <button id="roastBtn" onclick="generateRoast()">Click me!</button>
-  <p id="roastOutput"></p>
+  <div class="generator-container">
+    <h2>Funny Roast Generator</h2>
+    <button id="roastBtn" onclick="generateRoast()">Click me!</button>
+    <div class="output-container">
+      <p id="roastOutput"></p>
+      <button class="copyBtn" onclick="copyText('roastOutput')">Copy</button>
+    </div>
+  </div>
 
-  <h2>Random Meme Caption</h2>
-  <button id="memeBtn" onclick="generateMeme()">Click me!</button>
-  <p id="memeOutput"></p>
+  <div class="generator-container">
+    <h2>Random Meme Caption</h2>
+    <button id="memeBtn" onclick="generateMeme()">Click me!</button>
+    <div class="output-container">
+      <p id="memeOutput"></p>
+      <button class="copyBtn" onclick="copyText('memeOutput')">Copy</button>
+    </div>
+  </div>
 
-  <h2>Motivational Quote Generator</h2>
-  <button id="quoteBtn" onclick="generateQuote()">Click me!</button>
-  <p id="quoteOutput"></p>
+  <div class="generator-container">
+    <h2>Motivational Quote Generator</h2>
+    <button id="quoteBtn" onclick="generateQuote()">Click me!</button>
+    <div class="output-container">
+      <p id="quoteOutput"></p>
+      <button class="copyBtn" onclick="copyText('quoteOutput')">Copy</button>
+    </div>
+  </div>
+
+  <div class="generator-container extraBtnContainer" style="display:none;">
+    <h2>Extra Special Generator</h2>
+    <button class="extraBtn" id="extraBtn" onclick="generateExtra()">Click me!</button>
+    <div class="output-container">
+      <p id="extraOutput"></p>
+      <button class="copyBtn" onclick="copyText('extraOutput')">Copy</button>
+    </div>
+  </div>
+
+  <div class="generator-container extraBtnContainer" style="display:none;">
+    <h2>Super Fun Generator</h2>
+    <button class="extraBtn" id="superBtn" onclick="generateSuper()">Click me!</button>
+    <div class="output-container">
+      <p id="superOutput"></p>
+      <button class="copyBtn" onclick="copyText('superOutput')">Copy</button>
+    </div>
+  </div>
 
   <script>
+    let points = 0;
+
+    function addPoint() {
+      points++;
+      document.getElementById("points").innerText = "Points: " + points;
+      checkUnlocks();
+    }
+
+    function checkUnlocks() {
+      if (points >= 30) {
+        document.querySelectorAll('.extraBtnContainer')[0].style.display = 'inline-block';
+      }
+      if (points >= 60) {
+        document.querySelectorAll('.extraBtnContainer')[1].style.display = 'inline-block';
+      }
+    }
+
+    function copyText(id) {
+      const text = document.getElementById(id).innerText;
+      navigator.clipboard.writeText(text).then(() => { alert("Copied!"); });
+    }
+
     function createCycler(array) {
       let used = [];
       return function() {
         if (used.length === array.length) used = [];
         let i;
-        do {
-          i = Math.floor(Math.random()*array.length);
-        } while (used.includes(i));
+        do { i = Math.floor(Math.random()*array.length); } 
+        while (used.includes(i));
         used.push(i);
         return array[i];
       }
     }
 
-    // Homework Excuses (~30)
-    const excuses = [
-      "My dog ate my homework 💀","I left it at home 😭","My computer crashed 😱","I was sick 🤒",
-      "It got wet in the rain ☔","My cat hid it 🐱","I forgot to do it 💀","I overslept 😴",
-      "My printer ran out of ink 🖨️","I spilled juice on it 🧃","It got stuck in my backpack 🎒",
-      "My little brother shredded it 😬","I left it on the bus 🚌","I accidentally deleted it 💻",
-      "It got lost in the park 🌳","I was abducted by aliens 👽","I did it but left it at school 🏫",
-      "I was helping my mom 🍳","My dog buried it 🐕","I thought it was due tomorrow 😭",
-      "I did it on another planet 🚀","My homework caught fire 🔥","I gave it to the wrong teacher 😅",
-      "I left it in the locker 🗄️","I dropped it in the toilet 🚽","It disappeared mysteriously 👀",
-      "I did it but it got eaten by a dragon 🐉","I lent it to a friend and they lost it 😬",
-      "My homework turned into a frog 🐸","I was too busy saving the world 🌎"
-    ];
+    const excuses = ["My dog ate my homework 💀","I left it at home 😭","I was sick 🤒"];
+    const gamerTags = ["ShadowSlayer","MegaNoodle","EpicCat"];
+    const roasts = ["You're like a cloud 😏","You're proof mistakes exist 😎"];
+    const memes = ["When you open the fridge and forget 😅","That feeling when WiFi dies 💀"];
+    const quotes = ["Believe you can 💪","Even the darkest night will end 🌞"];
+    const extra = ["Secret unlocked! 🎉","Extra funny content 😎"];
+    const superFun = ["Mega secret generator! 🌟","Ultimate fun 😜"];
+
     const getExcuse = createCycler(excuses);
-    function generateExcuse() { document.getElementById("excuseOutput").innerText = getExcuse(); }
-
-    // Gamer Tags (~30)
-    const gamerTags = [
-      "ShadowSlayer","MegaNoodle","EpicCat","TurboDestroyer","PixelPunk","SilentMuffin","CrazyWizard",
-      "GhostKnight","DragonWolf","NeoNinja","FireLord","IceQueen","StormBreaker","RocketMaster","LunarWolf",
-      "PixelHunter","TurboTiger","ShadowHunter","MegaDragon","EpicWizard","GhostSlayer","SilentShadow",
-      "CrazyTiger","PixelKnight","DragonLord","TurboWolf","NeoWizard","FireKnight","IceSlayer","StormPunk"
-    ];
     const getGamerTag = createCycler(gamerTags);
-    function generateGamerTag() { document.getElementById("gamerTagOutput").innerText = getGamerTag(); }
-
-    // Roasts (~30)
-    const roasts = [
-      "You're like a cloud. When you disappear, it’s a beautiful day 😏","You're proof that even mistakes can exist 😎",
-      "You're like a software update. Whenever I see you, I think 'Not now' 💀","You bring everyone joy… when you leave 😬",
-      "Your secrets are safe with me. I never even listened 😏","You're like a broken pencil… pointless 😂",
-      "You're the human version of a typo 😅","You're like a software bug 💻","You remind me of a Monday morning 😴",
-      "You're a cloud of confusion ☁️","You're a living proof that bad ideas exist 💀","You're like decaf coffee… pointless ☕",
-      "You have the charm of a wet sock 🧦","You're a pop quiz nobody asked for 😬","You're a glitch in the matrix 👾",
-      "You're like a dead battery 🔋","You have all the grace of a spilled drink 🥤","You're like a closed door when someone needs help 🚪",
-      "You're the background noise of life 🎶","You're a slow WiFi in a rush hour 💻","You're the human version of buffering ⏳",
-      "You're like a flat soda 🥤","You're a puzzle with missing pieces 🧩","You're a typo in a perfect essay ✏️",
-      "You're like a phone with 1% battery 🔋","You're the long line at a coffee shop ☕","You're a mosquito in summer 🦟",
-      "You're like a Monday before coffee ☕","You're a page with no text 📄"
-    ];
     const getRoast = createCycler(roasts);
-    function generateRoast() { document.getElementById("roastOutput").innerText = getRoast(); }
-
-    // Meme Captions (~30)
-    const memes = [
-      "When you open the fridge and forget what you wanted 😅","That feeling when WiFi dies mid-game 💀",
-      "Me trying to sleep early but scrolling at 3 AM 😂","POV: You see your crush walking by 🤯","Trying to adult like 😬",
-      "When the teacher says 'pair up' and everyone looks at you 😭","When your alarm goes off and you hit snooze 😴",
-      "When someone eats your food 🍕","When the WiFi is slow 🔄","When you lose your phone 😱","Me vs my alarm clock ⏰",
-      "When you forget homework 📄","When your pet destroys something 🐕","When someone spoils a show you watch 📺",
-      "That moment you spill coffee ☕","When you trip in public 😳","When your crush talks to someone else 😭",
-      "When you can't find your shoes 👟","Me opening the fridge and closing it again 😅","When the teacher calls on you 😬",
-      "When the bus is late 🚌","When you step on a Lego 😭","When someone eats your fries 🍟","When the game lags 💻",
-      "When you drop your ice cream 🍦","When your phone dies mid-video 🎥","When you send a message to the wrong person 😅",
-      "When your socks don’t match 🧦","When you forget your password 🔑","When it rains right after you wash your car 🚗"
-    ];
     const getMeme = createCycler(memes);
-    function generateMeme() { document.getElementById("memeOutput").innerText = getMeme(); }
-
-    // Motivational Quotes (~30)
-    const quotes = [
-      "Believe you can and you're halfway there 💪","Even the darkest night will end and the sun will rise 🌞",
-      "Mistakes are proof that you are trying ✨","Stay positive, work hard, make it happen 💯",
-      "Dream big, start small, act now 🚀","You are stronger than you think 🦾","Never give up 💪",
-      "Success is earned, not given 🏆","Keep pushing forward 🚀","Every day is a new opportunity 🌅",
-      "You are capable of amazing things ✨","Believe in yourself 💯","Your only limit is you 🔥",
-      "Stay focused and never quit 🎯","The harder you work, the luckier you get 🍀","Make today count 🕒",
-      "Small steps lead to big results 👣","Your mindset shapes your reality 🧠","Failure is just feedback 🔁",
-      "Be the energy you want to attract ✨","Push yourself because no one else will 💪","Keep climbing 🌄",
-      "The best view comes after the hardest climb 🏔️","Work hard, dream bigger 💭","Stay hungry, stay foolish 🤓",
-      "Focus on progress, not perfection ✅","You are unstoppable 🌟","Turn your dreams into plans 📝",
-      "Embrace challenges 💥","Every day is a second chance ⏳"
-    ];
     const getQuote = createCycler(quotes);
-    function generateQuote() { document.getElementById("quoteOutput").innerText = getQuote(); }
+    const getExtra = createCycler(extra);
+    const getSuper = createCycler(superFun);
+
+    function generateExcuse() { addPoint(); document.getElementById("excuseOutput").innerText = getExcuse(); }
+    function generateGamerTag() { addPoint(); document.getElementById("gamerTagOutput").innerText = getGamerTag(); }
+    function generateRoast() { addPoint(); document.getElementById("roastOutput").innerText = getRoast(); }
+    function generateMeme() { addPoint(); document.getElementById("memeOutput").innerText = getMeme(); }
+    function generateQuote() { addPoint(); document.getElementById("quoteOutput").innerText = getQuote(); }
+    function generateExtra() { document.getElementById("extraOutput").innerText = getExtra(); }
+    function generateSuper() { document.getElementById("superOutput").innerText = getSuper(); }
   </script>
 </body>
 </html>
