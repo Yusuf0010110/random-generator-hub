@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Random Generator Hub</title>
+  <style>
+    body { font-family: Arial; text-align: center; padding: 50px; background-color: #f5f5f5; }
+    button { margin: 10px; padding: 10px 20px; font-size: 16px; cursor: pointer; }
+    h2 { margin-top: 40px; }
+    #output { font-weight: bold; margin-top: 15px; font-size: 18px; }
+  </style>
+</head>
+<body>
+  <h1>Random Generator Hub</h1>
+
+  <h2>Homework Excuse Generator</h2>
+  <button onclick="generateExcuse()">Click me!</button>
+  <p id="excuseOutput"></p>
+
+  <h2>Gamer Tag Generator</h2>
+  <button onclick="generateGamerTag()">Click me!</button>
+  <p id="gamerTagOutput"></p>
+
+  <h2>Funny Roast Generator</h2>
+  <button onclick="generateRoast()">Click me!</button>
+  <p id="roastOutput"></p>
+
+  <script>
+    const excuses = [
+      "My dog hacked my WiFi 💀",
+      "I thought it was due next week 😭",
+      "My homework got eaten by my cat 🐱",
+      "I accidentally did it on Mars 🚀"
+    ];
+    const gamerTags = [
+      "NoobSlayerX", "EpicNoodle", "ShadowCat", "PizzaDestroyer", "PixelPunk"
+    ];
+    const roasts = [
+      "You're like a cloud. When you disappear, it’s a beautiful day 😏",
+      "You're proof that even mistakes can exist 😎",
+      "You're like a software update. Whenever I see you, I think 'Not now' 💀",
+      "You have something on your chin… no, the third one down 😜"
+    ];
+
+    function generateExcuse() {
+      const i = Math.floor(Math.random() * excuses.length);
+      document.getElementById("excuseOutput").innerText = excuses[i];
+    }
+    function generateGamerTag() {
+      const i = Math.floor(Math.random() * gamerTags.length);
+      document.getElementById("gamerTagOutput").innerText = gamerTags[i];
+    }
+    function generateRoast() {
+      const i = Math.floor(Math.random() * roasts.length);
+      document.getElementById("roastOutput").innerText = roasts[i];
+    }
+  </script>
+</body>
+</html>
