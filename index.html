@@ -4,10 +4,33 @@
   <meta charset="UTF-8">
   <title>Random Generator Hub</title>
   <style>
-    body { font-family: Arial; text-align: center; padding: 50px; background-color: #f5f5f5; }
-    button { margin: 10px; padding: 10px 20px; font-size: 16px; cursor: pointer; }
-    h2 { margin-top: 40px; }
-    #output { font-weight: bold; margin-top: 15px; font-size: 18px; }
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 50px;
+      background: linear-gradient(to bottom, #ffe6f2, #cce0ff);
+      color: #333;
+    }
+    h1 { color: #2c3e50; }
+    h2 { margin-top: 40px; color: #34495e; }
+    button {
+      margin: 10px;
+      padding: 10px 25px;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 10px;
+      border: none;
+      background: linear-gradient(to right, #ff6b6b, #f7d794);
+      color: white;
+      transition: background 0.3s;
+    }
+    button:hover { background: linear-gradient(to right, #f7d794, #ff6b6b); }
+    p {
+      font-weight: bold;
+      margin-top: 15px;
+      font-size: 18px;
+      color: #e74c3c;
+    }
   </style>
 </head>
 <body>
@@ -25,35 +48,66 @@
   <button onclick="generateRoast()">Click me!</button>
   <p id="roastOutput"></p>
 
+  <h2>Random Meme Caption</h2>
+  <button onclick="generateMeme()">Click me!</button>
+  <p id="memeOutput"></p>
+
+  <h2>Motivational Quote Generator</h2>
+  <button onclick="generateQuote()">Click me!</button>
+  <p id="quoteOutput"></p>
+
   <script>
-    const excuses = [
-      "My dog hacked my WiFi 💀",
-      "I thought it was due next week 😭",
-      "My homework got eaten by my cat 🐱",
-      "I accidentally did it on Mars 🚀"
-    ];
-    const gamerTags = [
-      "NoobSlayerX", "EpicNoodle", "ShadowCat", "PizzaDestroyer", "PixelPunk"
-    ];
-    const roasts = [
-      "You're like a cloud. When you disappear, it’s a beautiful day 😏",
-      "You're proof that even mistakes can exist 😎",
-      "You're like a software update. Whenever I see you, I think 'Not now' 💀",
-      "You have something on your chin… no, the third one down 😜"
-    ];
+    // Homework Excuses
+    const excuseSubjects = ["My dog", "My cat", "My goldfish", "My hamster", "My alien friend", "My neighbor"];
+    const excuseVerbs = ["ate", "deleted", "hid", "destroyed", "borrowed", "crashed"];
+    const excuseObjects = ["my homework", "my notes", "my project", "my essay", "my laptop", "my binder"];
+    const excuseExtras = ["💀","😭","😱","👽","🚀","😅"];
 
     function generateExcuse() {
-      const i = Math.floor(Math.random() * excuses.length);
-      document.getElementById("excuseOutput").innerText = excuses[i];
+      const s = excuseSubjects[Math.floor(Math.random()*excuseSubjects.length)];
+      const v = excuseVerbs[Math.floor(Math.random()*excuseVerbs.length)];
+      const o = excuseObjects[Math.floor(Math.random()*excuseObjects.length)];
+      const e = excuseExtras[Math.floor(Math.random()*excuseExtras.length)];
+      document.getElementById("excuseOutput").innerText = `${s} ${v} ${o} ${e}`;
     }
+
+    // Gamer Tags
+    const gamerPrefixes = ["Shadow","Mega","Epic","Turbo","Pixel","Silent","Crazy","Ghost","Dragon","Neo"];
+    const gamerSuffixes = ["Slayer","Noodle","Cat","Destroyer","Punk","Muffin","Wizard","Knight","Wolf","Ninja"];
     function generateGamerTag() {
-      const i = Math.floor(Math.random() * gamerTags.length);
-      document.getElementById("gamerTagOutput").innerText = gamerTags[i];
+      const p = gamerPrefixes[Math.floor(Math.random()*gamerPrefixes.length)];
+      const s = gamerSuffixes[Math.floor(Math.random()*gamerSuffixes.length)];
+      document.getElementById("gamerTagOutput").innerText = `${p}${s}${Math.floor(Math.random()*999)}`;
     }
+
+    // Roasts
+    const roastStarts = ["You're like a cloud.","You're proof","You're like a software update.","You bring","Your secrets","You remind me"];
+    const roastEnds = ["When you disappear, it’s a beautiful day 😏","Even mistakes can exist 😎","Whenever I see you, I think 'Not now' 💀","Everyone so much joy when you leave 😬","Are safe with me, I never listened 😏","Of a broken pencil… pointless 😂"];
     function generateRoast() {
-      const i = Math.floor(Math.random() * roasts.length);
-      document.getElementById("roastOutput").innerText = roasts[i];
+      const s = roastStarts[Math.floor(Math.random()*roastStarts.length)];
+      const e = roastEnds[Math.floor(Math.random()*roastEnds.length)];
+      document.getElementById("roastOutput").innerText = `${s} ${e}`;
+    }
+
+    // Meme Captions
+    const memeStarts = ["When you open the fridge","That feeling when WiFi dies","Me trying to sleep early","POV: You see your crush","Trying to adult like","When the teacher says 'pair up'"];
+    const memeEnds = ["and forget what you wanted 😅","mid-game 💀","but still scrolling at 3 AM 😂","and panic 😱","and fail 😬","and everyone looks at you 😭"];
+    function generateMeme() {
+      const s = memeStarts[Math.floor(Math.random()*memeStarts.length)];
+      const e = memeEnds[Math.floor(Math.random()*memeEnds.length)];
+      document.getElementById("memeOutput").innerText = `${s} ${e}`;
+    }
+
+    // Motivational Quotes
+    const quoteStarts = ["Believe you can","Even the darkest night","Mistakes are proof","Stay positive","Dream big","You are stronger"];
+    const quoteMids = ["and you're halfway there 💪","will end and the sun will rise 🌞","that you are trying ✨","work hard, make it happen 💯","start small, act now 🚀","than you think 🦾"];
+    function generateQuote() {
+      const s = quoteStarts[Math.floor(Math.random()*quoteStarts.length)];
+      const m = quoteMids[Math.floor(Math.random()*quoteMids.length)];
+      document.getElementById("quoteOutput").innerText = `${s}, ${m}`;
     }
   </script>
 </body>
 </html>
+
+
