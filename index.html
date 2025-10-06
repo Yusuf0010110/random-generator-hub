@@ -43,6 +43,18 @@ body.neon .generator,body.neon #themePanel,body.neon #soundPanel,body.neon #lead
 <div class="output" id="dareOutput"></div>
 </div>
 
+<div class="generator">
+<h3>Quote Generator</h3>
+<button onclick="generate('quote')">Click me!</button>
+<div class="output" id="quoteOutput"></div>
+</div>
+
+<div class="generator">
+<h3>Made-Up Name Generator</h3>
+<button onclick="generate('name')">Click me!</button>
+<div class="output" id="nameOutput"></div>
+</div>
+
 <!-- Theme Panel -->
 <div id="themePanel">
 <h3>🎨 Theme Selector (Unlocked at 200 pts)</h3>
@@ -83,10 +95,60 @@ if (points >= 300) document.getElementById('soundPanel').style.display = 'block'
 document.getElementById('leaderboard').style.display = 'block';
 updateLeaderboard();
 
-// 50 options per generator
-const excuses = Array.from({length:50},(_,i)=>`Excuse #${i+1}`);
-const gamers = Array.from({length:50},(_,i)=>`GamerTag${i+1}`);
-const dares = Array.from({length:50},(_,i)=>`Dare #${i+1}`);
+// 50 real fun options per generator
+const excuses = [
+"My dog ate it", "Wi-Fi exploded", "Aliens stole it", "My goldfish needed tutoring", "Printer caught fire",
+"Time-travel mishap", "Ghost erased it", "I blinked too long", "My homework grew legs", "My hamster hid it",
+"UFO sighting distracted me", "I sneezed it away", "It self-destructed", "Invisible ink mishap", "Lost in laundry",
+"Homework teleported", "Black hole incident", "Teacher turned invisible", "Homework went surfing", "Caught in a tornado",
+"My sibling used it as a kite", "My cat drew on it", "Accidentally submitted a blank page", "Homework evaporated", "Torn by wind",
+"My pencil ran away", "Ink spilled mysteriously", "Homework joined circus", "It grew wings", "My dog typed wrong answers",
+"Homework glued itself shut", "It got abducted", "Homework got eaten by birds", "Lost in video game", "Invisible monster ate it",
+"My plant used it as fertilizer", "Homework turned into slime", "Slipped behind couch", "Homework ran a marathon", "Caught by aliens",
+"My robot vacuum shredded it", "Homework turned into toast", "It teleported to Mars", "Washed away by rain", "Stolen by neighbor",
+"Homework became a puzzle", "It hid in the fridge", "Homework exploded", "My shadow ran away", "Homework joined a band"
+];
+
+const gamers = [
+"ShadowSlayer", "PixelPunk", "DragonMaster", "NoobCrusher", "GigaN00b", "TurboSniper", "GhostHunter", "EpicSloth",
+"NinjaToast", "LaserCat", "QuantumN00b", "VortexRider", "CyberWolf", "MegaMuffin", "BlazeStorm", "SilentArrow",
+"PixelPirate", "HyperNova", "FrostByte", "ThunderClaw", "LlamaLord", "OmegaNinja", "CrazyKoala", "ShadowPanda",
+"CyberSamurai", "NeonTiger", "ZombieHunter", "RocketRider", "AquaSniper", "FuryDragon", "TechWizard", "LaserFalcon",
+"ViperStrike", "MegaPixel", "GhostReaper", "QuantumKnight", "PixelPhoenix", "TurboFalcon", "FrostWolf", "BlazeTiger",
+"SilentShadow", "CyberDragon", "OmegaFalcon", "NeonNinja", "ThunderWolf", "CrazyPixel", "HyperLlama", "ShadowWizard",
+"LaserPhoenix", "TurboTiger"
+];
+
+const dares = [
+"Do 10 jumping jacks", "Sing your favorite song", "Talk like a pirate for 5 min", "Do a silly dance", "Act like a cat",
+"Say tongue twister 3 times", "Hop on one foot 20 sec", "Speak in rhyme for 1 min", "Draw blindfolded", "Do a funny face",
+"Make animal sounds", "Balance a book on head", "Spin 5 times and walk straight", "Do a robot dance", "Pretend to be a superhero",
+"Act like a chicken", "Do 5 push-ups", "Walk backwards 10 steps", "Say alphabet backwards", "Pretend to sleep for 1 min",
+"Talk in slow motion", "Do 3 cartwheels", "Make up a joke", "Do a silly walk", "Pretend to be a statue", "Whistle a tune",
+"Make up a new handshake", "Pretend to ride a horse", "Speak in a foreign accent", "Draw with your non-dominant hand",
+"Do a funny voice reading", "Pretend to be invisible", "Make a shadow puppet", "Do 10 squats", "Pretend to be a robot",
+"Hop like a bunny", "Make a silly hat from paper", "Act like a zombie", "Do 5 lunges", "Pretend to be a dragon",
+"Make up a secret handshake", "Do a silly salute", "Act like a penguin", "Speak like a narrator", "Do 5 star jumps",
+"Pretend to juggle", "Make a funny hat", "Act like a snail", "Do a silly dance move"
+];
+
+const quotes = [
+"Believe you can", "Keep pushing forward", "You are amazing", "Never give up", "Dream big", "Stay positive", "Work hard",
+"Be kind", "Smile often", "Embrace the journey", "Be yourself", "Do your best", "Choose happiness", "Stay humble",
+"Learn from mistakes", "Take risks", "Be brave", "Stay curious", "Love yourself", "Help others", "Shine bright", "Stay strong",
+"Live in the moment", "Trust yourself", "Be fearless", "Keep learning", "Be grateful", "Chase your dreams", "Stay focused",
+"Believe in magic", "Stay wild", "Keep growing", "Laugh lots", "Be patient", "Follow your heart", "Be awesome",
+"Stay creative", "Be confident", "Enjoy the little things", "Be unique", "Keep exploring", "Stay motivated", "Be honest",
+"Stay inspired", "Work smart", "Be bold", "Keep smiling", "Stay true", "Dream more", "Be unstoppable"
+];
+
+const names = [
+"Zorblax", "Fizzlepop", "Grumbleton", "Snazzle", "Wobblekin", "Jibberish", "Flibberty", "Noodleton", "Blorple",
+"Squeakums", "Dingleberry", "Froodle", "Bumbleton", "Snorkelton", "Plopadoo", "Quibble", "Wizzleton", "Gloop",
+"Zibble", "Mufflump", "Joggle", "Twizzle", "Flopton", "Snickerdoodle", "Bloop", "Dazzleton", "Fizzle", "Wobblepop",
+"Nibber", "Clopton", "Snizzle", "Glorp", "Muddleton", "Jibberjabber", "Ploop", "Fizzwhizzle", "Bloopton", "Snugglepot",
+"Twiddle", "Gloopton", "Wobblenut", "Snorkle", "Plibble", "Froggleton", "Nibbleton", "Zazzle", "Jumblepop", "Blopton"
+];
 
 function addPoint(){ 
   points++;
@@ -94,6 +156,7 @@ function addPoint(){
   document.getElementById('pointsCounter').innerText = "Points: " + points;
   if(points===200){alert("🎨 Theme Selector Unlocked!");document.getElementById('themePanel').style.display='block';}
   if(points===300){alert("🔊 Sound Controls Unlocked!");document.getElementById('soundPanel').style.display='block';}
+  updateLeaderboard();
   if(clickSoundEnabled) document.getElementById('clickSound').play();
 }
 
@@ -102,18 +165,10 @@ function generate(type){
   if(type==='excuse') item = excuses[Math.floor(Math.random()*excuses.length)];
   else if(type==='gamer') item = gamers[Math.floor(Math.random()*gamers.length)];
   else if(type==='dare') item = dares[Math.floor(Math.random()*dares.length)];
+  else if(type==='quote') item = quotes[Math.floor(Math.random()*quotes.length)];
+  else if(type==='name') item = names[Math.floor(Math.random()*names.length)];
   document.getElementById(type+'Output').innerText = item;
   addPoint();
-  if(points===100){ // example milestone
-    let name = prompt("You reached 100 points! Enter your name for the leaderboard:");
-    if(name){ 
-      leaderboard.push({name:name, points:points});
-      leaderboard.sort((a,b)=>b.points-a.points);
-      leaderboard = leaderboard.slice(0,20);
-      localStorage.setItem('leaderboard',JSON.stringify(leaderboard));
-      updateLeaderboard();
-    }
-  }
 }
 
 function setTheme(t){
@@ -138,6 +193,13 @@ function toggleMusic(){
 function updateLeaderboard(){
   const list = document.getElementById('leaderboardList');
   list.innerHTML = '';
+  // Add current points as "You"
+  let currentPlayer = {name:"You", points:points};
+  let combined = leaderboard.filter(p=>p.name!=="You");
+  combined.push(currentPlayer);
+  combined.sort((a,b)=>b.points-a.points);
+  leaderboard = combined.slice(0,20);
+  localStorage.setItem('leaderboard',JSON.stringify(leaderboard));
   leaderboard.forEach(p=>{
     const li = document.createElement('li');
     li.textContent = `${p.name}: ${p.points}`;
