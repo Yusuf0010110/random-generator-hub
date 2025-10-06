@@ -1,712 +1,150 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <title>Random Generator Hub</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <style>
-    :root{
-      --bg1:#ffe6f2;
-      --bg2:#cce0ff;
-      --bg3:#d5ffcc;
-      --card:#ffffff;
-      --accent:#e67e22;
-      --muted:#666;
-    }
-    body{
-      margin:0;
-      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-      background: linear-gradient(135deg,var(--bg1),var(--bg2),var(--bg3));
-      color:#222;
-      padding:28px;
-      box-sizing:border-box;
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
-    }
-
-    h1{ margin:0 0 12px; font-size:28px; color:#203040; text-shadow:0 2px 0 rgba(255,255,255,0.6);}
-    .container{ max-width:900px; margin:0 auto; padding-bottom:80px; }
-
-    /* floating points */
-    #points{
-      position:fixed;
-      top:12px;
-      left:12px;
-      z-index:1200;
-      background:rgba(255,255,255,0.95);
-      padding:10px 14px;
-      border-radius:12px;
-      box-shadow:0 6px 18px rgba(0,0,0,0.12);
-      font-weight:700;
-      color:var(--accent);
-    }
-
-    /* generator card style (stacked like you asked) */
-    .generator{
-      background:rgba(255,255,255,0.9);
-      border-radius:14px;
-      padding:18px;
-      margin:14px 0;
-      box-shadow:0 8px 22px rgba(0,0,0,0.08);
-      text-align:left;
-    }
-    .generator h2{ margin:0 0 8px; font-size:18px; color:#1f2d3d; }
-    .controls{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
-    button{
-      cursor:pointer;
-      border:none;
-      border-radius:10px;
-      padding:10px 18px;
-      font-weight:700;
-      color:white;
-      background:var(--accent);
-      box-shadow:0 6px 14px rgba(0,0,0,0.08);
-    }
-    .btn-copy{ background:#2ecc71; padding:8px 12px; font-size:13px; }
-    .btn-secondary{ background:#3498db; }
-    .output{
-      margin-top:12px;
-      font-weight:700;
-      color:#c0392b;
-      min-height:22px;
-      display:flex;
-      align-items:center;
-      gap:10px;
-      flex-wrap:wrap;
-    }
-    input[type="number"]{ padding:8px; border-radius:8px; border:1px solid #ddd; width:110px; }
-
-    /* leaderboard panel (always visible on right) */
-    #leaderboard{
-      position:fixed;
-      right:12px;
-      top:60px;
-      width:300px;
-      max-height:78vh;
-      overflow:auto;
-      background:rgba(255,255,255,0.98);
-      border-radius:10px;
-      padding:14px;
-      box-shadow:0 10px 30px rgba(0,0,0,0.12);
-      z-index:1100;
-    }
-    #leaderboard h3{ margin:0 0 8px; font-size:16px; }
-    .lb-controls{ display:flex; gap:8px; align-items:center; margin-bottom:8px; }
-    .small{ font-size:13px; color:var(--muted); }
-    ol{ padding-left:18px; margin:6px 0; }
-    li{ margin:6px 0; font-weight:700; color:#222; }
-
-    .you { color:#d35400; font-weight:900; }
-
-    /* small responsive */
-    @media (max-width:900px){
-      #leaderboard{ display:none; } /* hide on small screens to avoid blocking — user can toggle later if needed */
-      body{ padding:18px; }
-    }
-  </style>
+<meta charset="UTF-8">
+<title>Random Generator Hub</title>
+<style>
+body { font-family: Arial, sans-serif; margin:0; padding:20px; background:linear-gradient(135deg,#89f7fe,#66a6ff); color:#333; transition:background 0.5s,color 0.5s;}
+h1{text-align:center;}
+.generator{margin:20px auto;padding:15px;max-width:500px;border-radius:10px;background:#fff;box-shadow:0 4px 8px rgba(0,0,0,0.2);}
+button{margin-top:10px;padding:8px 14px;border:none;border-radius:6px;cursor:pointer;background:#66a6ff;color:white;font-weight:bold;}
+button:hover{opacity:0.8;}
+.output{margin-top:10px;font-style:italic;}
+#pointsCounter{position:fixed;top:10px;left:10px;background:rgba(0,0,0,0.7);color:white;padding:8px 14px;border-radius:8px;font-weight:bold;z-index:1000;}
+#themePanel,#soundPanel,#leaderboard{display:none;margin:20px auto;padding:15px;max-width:500px;border-radius:10px;background:#fff;box-shadow:0 4px 8px rgba(0,0,0,0.2);}
+body.dark{background:#111;color:#eee;}
+body.dark .generator,body.dark #themePanel,body.dark #soundPanel,body.dark #leaderboard{background:#222;color:#eee;}
+body.neon{background:#0f0f0f;color:#0ff;}
+body.neon .generator,body.neon #themePanel,body.neon #soundPanel,body.neon #leaderboard{background:#111;border:2px solid #0ff;color:#0ff;box-shadow:0 0 10px #0ff;}
+#leaderboard{position:fixed;top:10px;right:10px;width:200px;height:400px;overflow:auto;z-index:999;}
+</style>
 </head>
 <body>
-  <div id="points">Points: 0</div>
-  <div class="container">
-    <h1>Random Generator Hub</h1>
 
-    <!-- Generators stacked -->
-    <div class="generator">
-      <h2>Homework Excuse Generator</h2>
-      <div class="controls">
-        <button id="excuseBtn">Click me!</button>
-        <button class="btn-copy" data-target="excuseOutput">Copy</button>
-        <span class="small">(Every click = +1 point)</span>
-      </div>
-      <div class="output"><div id="excuseOutput"></div></div>
-    </div>
+<div id="pointsCounter">Points: 0</div>
+<h1>🎲 Random Generator Hub 🎲</h1>
 
-    <div class="generator">
-      <h2>Gamer Tag Generator</h2>
-      <div class="controls">
-        <button id="gamerTagBtn">Click me!</button>
-        <button class="btn-copy" data-target="gamerTagOutput">Copy</button>
-        <span class="small">(Every click = +1 point)</span>
-      </div>
-      <div class="output"><div id="gamerTagOutput"></div></div>
-    </div>
+<!-- Generators -->
+<div class="generator">
+<h3>Homework Excuse Generator</h3>
+<button onclick="generate('excuse')">Click me!</button>
+<div class="output" id="excuseOutput"></div>
+</div>
 
-    <div class="generator">
-      <h2>Roast Generator</h2>
-      <div class="controls">
-        <button id="roastBtn">Click me!</button>
-        <button class="btn-copy" data-target="roastOutput">Copy</button>
-        <span class="small">(Funny but chill)</span>
-      </div>
-      <div class="output"><div id="roastOutput"></div></div>
-    </div>
+<div class="generator">
+<h3>Gamer Tag Generator</h3>
+<button onclick="generate('gamer')">Click me!</button>
+<div class="output" id="gamerOutput"></div>
+</div>
 
-    <div class="generator">
-      <h2>Meme Generator</h2>
-      <div class="controls">
-        <button id="memeBtn">Click me!</button>
-        <button class="btn-copy" data-target="memeOutput">Copy</button>
-        <span class="small">Use as captions</span>
-      </div>
-      <div class="output"><div id="memeOutput"></div></div>
-    </div>
+<div class="generator">
+<h3>Dare Generator</h3>
+<button onclick="generate('dare')">Click me!</button>
+<div class="output" id="dareOutput"></div>
+</div>
 
-    <div class="generator">
-      <h2>Quote Generator</h2>
-      <div class="controls">
-        <button id="quoteBtn">Click me!</button>
-        <button class="btn-copy" data-target="quoteOutput">Copy</button>
-        <span class="small">Nice vibez</span>
-      </div>
-      <div class="output"><div id="quoteOutput"></div></div>
-    </div>
+<!-- Theme Panel -->
+<div id="themePanel">
+<h3>🎨 Theme Selector (Unlocked at 200 pts)</h3>
+<button onclick="setTheme('default')">Default</button>
+<button onclick="setTheme('dark')">Dark</button>
+<button onclick="setTheme('neon')">Neon</button>
+</div>
 
-    <!-- Unlockable (30 pts) -->
-    <div class="generator extra" style="display:none;">
-      <h2>Name Generator</h2>
-      <div class="controls">
-        <button id="nameBtn" class="extraBtn">Click me!</button>
-        <button class="btn-copy" data-target="nameOutput">Copy</button>
-        <span class="small">Unlocks at 30 points</span>
-      </div>
-      <div class="output"><div id="nameOutput"></div></div>
-    </div>
+<!-- Sound Panel -->
+<div id="soundPanel">
+<h3>🔊 Sound Controls (Unlocked at 300 pts)</h3>
+<button onclick="toggleClickSound()">Toggle Click Sound</button>
+<button onclick="toggleMusic()">Toggle Background Music</button>
+</div>
 
-    <!-- Unlockable (60 pts) -->
-    <div class="generator extra" style="display:none;">
-      <h2>Number Generator</h2>
-      <div class="controls">
-        <input id="maxNumber" type="number" placeholder="e.g., 100" min="1" />
-        <button id="numberBtn" class="extraBtn">Click me!</button>
-        <button class="btn-copy" data-target="numberOutput">Copy</button>
-        <span class="small">Unlocks at 60 points</span>
-      </div>
-      <div class="output"><div id="numberOutput"></div></div>
-    </div>
+<!-- Leaderboard -->
+<div id="leaderboard">
+<h3>🏆 Leaderboard</h3>
+<ol id="leaderboardList"></ol>
+</div>
 
-    <!-- Unlockable (90 pts) -->
-    <div class="generator extra" style="display:none;">
-      <h2>Dare Generator</h2>
-      <div class="controls">
-        <button id="dareBtn" class="extraBtn">Click me!</button>
-        <button class="btn-copy" data-target="dareOutput">Copy</button>
-        <span class="small">Unlocks at 90 points</span>
-      </div>
-      <div class="output"><div id="dareOutput"></div></div>
-    </div>
+<audio id="clickSound" src="https://www.fesliyanstudios.com/play-mp3/387" preload="auto"></audio>
+<audio id="bgMusic" src="https://www.bensound.com/bensound-music/bensound-sunny.mp3" preload="auto" loop></audio>
 
-  </div>
+<script>
+// initial setup
+let points = parseInt(localStorage.getItem('points')) || 0;
+let theme = localStorage.getItem('theme') || 'default';
+let clickSoundEnabled = JSON.parse(localStorage.getItem('clickSound')) ?? false;
+let musicEnabled = JSON.parse(localStorage.getItem('music')) ?? false;
+let leaderboard = JSON.parse(localStorage.getItem('leaderboard')) || [];
+document.body.classList.add(theme);
+document.getElementById('pointsCounter').innerText = "Points: " + points;
+const bgMusic = document.getElementById('bgMusic');
+if (musicEnabled) bgMusic.play();
+if (points >= 200) document.getElementById('themePanel').style.display = 'block';
+if (points >= 300) document.getElementById('soundPanel').style.display = 'block';
+document.getElementById('leaderboard').style.display = 'block';
+updateLeaderboard();
 
-  <!-- Leaderboard (Local) -->
-  <div id="leaderboard" aria-live="polite">
-    <h3>Leaderboard (Local Top 20)</h3>
-    <div class="lb-controls">
-      <button id="btnChangeName" class="btn-secondary">Set/Change Name</button>
-      <button id="btnResetLB" style="background:#bdc3c7;color:#222">Reset</button>
-    </div>
-    <div class="small" id="yourPos">Your position: —</div>
-    <div id="leaderboardContent" style="margin-top:8px"></div>
-  </div>
+// 50 options per generator
+const excuses = Array.from({length:50},(_,i)=>`Excuse #${i+1}`);
+const gamers = Array.from({length:50},(_,i)=>`GamerTag${i+1}`);
+const dares = Array.from({length:50},(_,i)=>`Dare #${i+1}`);
 
-  <script>
-    /***************
-     * Data: 50 items each (real text)
-     ***************/
-    const excuses = [
-      "My dog ate my homework (for real this time)",
-      "I accidentally submitted the wrong file",
-      "I left it on the bus and couldn’t get it back",
-      "My printer ran out of ink right before I printed it",
-      "I was sick and couldn't finish it",
-      "I forgot my homework at home on my desk",
-      "My little brother tore it up thinking it was paper",
-      "I lost it while riding my bike to school",
-      "My computer crashed and I lost the file",
-      "I was helping my neighbor with something urgent",
-      "The Wi-Fi went out and I couldn't upload it",
-      "I had a surprise dentist appointment",
-      "I was doing chores for my family",
-      "I got stuck in traffic for hours",
-      "The wind blew my homework away in the yard",
-      "My cat sat on it and smeared everything",
-      "I fell asleep working on it and missed the deadline",
-      "I honestly thought it was due next week",
-      "I had to babysit my sibling unexpectedly",
-      "We had a family emergency and I couldn’t finish",
-      "It vanished from my backpack somehow",
-      "My pencil snapped and I had no spare",
-      "I was stuck in a long queue and lost track of time",
-      "My alarm didn't go off and I overslept",
-      "I was practicing for a performance and lost track",
-      "My dog hid it under the couch and I couldn't find it",
-      "I spilled juice on it and it ruined everything",
-      "Someone borrowed it and forgot to return it",
-      "My backpack zipper broke and papers scattered",
-      "I left it on the kitchen table and it got thrown out",
-      "My laptop updated and deleted recent files",
-      "I thought I uploaded it but I uploaded a blank document",
-      "It got wet in the rain when I was walking home",
-      "I had to go to an unexpected appointment",
-      "I was feeling dizzy and needed to rest",
-      "My homework merged with my art project and chaos happened",
-      "I tried to multitask and messed it up",
-      "The file was corrupted when I saved it",
-      "I accidentally worked on the wrong class assignment",
-      "My pen exploded in my bag and ruined the pages",
-      "I left it at my friend's house by mistake",
-      "I had a power outage while finishing it",
-      "My brother's science project used it as a template",
-      "I was teaching my pet a trick and time disappeared",
-      "I dropped it down a storm drain (wild but true)",
-      "I thought I handed it in but I handed in someone else's",
-      "I was researching and the page timed out",
-      "I got distracted and forgot to save my work",
-      "My homework turned into a snack (long story)"
-    ];
+function addPoint(){ 
+  points++;
+  localStorage.setItem('points',points);
+  document.getElementById('pointsCounter').innerText = "Points: " + points;
+  if(points===200){alert("🎨 Theme Selector Unlocked!");document.getElementById('themePanel').style.display='block';}
+  if(points===300){alert("🔊 Sound Controls Unlocked!");document.getElementById('soundPanel').style.display='block';}
+  if(clickSoundEnabled) document.getElementById('clickSound').play();
+}
 
-    const gamerTags = [
-      "ShadowSlayer","PixelPirate","DragonNinja","GhostRider","CyberKnight",
-      "RocketRanger","PhantomFury","BlazeWizard","NightStalker","FrostByte",
-      "PixelPunk","LaserLancer","TurboTiger","MysticMage","ThunderWolf",
-      "NovaNinja","IronGamer","DarkSorcerer","CyberSamurai","FirePhoenix",
-      "StarSlasher","QuantumQuake","BladeRunner","StormRider","LunarLegend",
-      "IcePhoenix","VenomViper","AlphaWolf","SteelDragon","GalaxyGamer",
-      "SolarFlame","NeonNinja","CrystalKnight","MegaWizard","FrostDragon",
-      "TurboShadow","InfernoMage","DarkFalcon","CyberStorm","ThunderDragon",
-      "PixelAssassin","ShadowPhoenix","FireBlade","StormWolf","LunarWizard",
-      "IronShadow","NovaBlade","GhostHunter","BlazeFalcon","NebulaKnight"
-    ];
-
-    const roasts = [
-      "You're like a cloud — when you disappear, it's a beautiful day.",
-      "I'd explain it to you but I left my crayons at home.",
-      "You bring so much joy… when you leave the room.",
-      "You're proof that evolution sometimes naps.",
-      "You're as useful as the 'ueue' in 'queue'.",
-      "Some drink from the fountain of knowledge; you only gargled.",
-      "I'd call you out but I'm afraid you'd lag behind reality.",
-      "You're like a software update—annoying and never at the right time.",
-      "Your story is so empty it echoes.",
-      "You're the human version of a participation trophy.",
-      "If brains were dynamite you couldn't blow your hat off.",
-      "You're the reason the warning label industry exists.",
-      "You're not stupid — you just have bad luck thinking.",
-      "Your vibes are buffering.",
-      "You have the charisma of a nap.",
-      "You're proof that memes can become people.",
-      "You're like decaf: trying, but not necessary.",
-      "Your jokes could use a firmware update.",
-      "You're the plot twist nobody asked for.",
-      "If awkward was a sport, you'd win gold.",
-      "You're a walking '404: Coolness not found'.",
-      "You mix up common sense with uncommon nonsense.",
-      "You're a long commercial during my favorite show.",
-      "You make Mondays jealous.",
-      "You're the human version of a typo.",
-      "You'd lose a staring contest with a statue.",
-      "Your aura needs a software patch.",
-      "You're the reason they invented the snooze button.",
-      "Even autocorrect refuses to help you.",
-      "You're like a broken pencil — pointless.",
-      "You're an expired meme.",
-      "You're the background noise in a great playlist.",
-      "You're the personification of 'did they really just say that?'.",
-      "You're like a puzzle missing pieces.",
-      "You're the long part of a long story.",
-      "You'd be late to your own roast.",
-      "You're a cliffhanger with no sequel.",
-      "You're like a slow Wi-Fi in finals week.",
-      "You make onions cry laughing at you.",
-      "You're a demo version of awesome.",
-      "You're the reason people check receipts twice.",
-      "You're an unsent text — uncomfortable and confusing.",
-      "You'd be out-sprinted by a sloth with motivation.",
-      "You're a pop quiz nobody studied for.",
-      "You're the surprise ending of a bad show.",
-      "You're a notification with bad timing.",
-      "You're a free trial of weirdness."
-    ];
-
-    const memes = [
-      "When you open the fridge and forget what you wanted.",
-      "That face when Wi-Fi drops mid-game.",
-      "Me pretending to be productive at 3AM.",
-      "When autocorrect betrays you in the group chat.",
-      "POV: You said 'I'm on my way' 20 minutes ago.",
-      "When the teacher says 'pop quiz' and you choke.",
-      "Me: I'll sleep early. Also me: scrolls for 4 hours.",
-      "When your snack disappears and you act innocent.",
-      "When the group chat realizes it's Monday.",
-      "When your phone dies during the perfect moment.",
-      "When someone says 'we need to talk' and you panic.",
-      "Me trying to act surprised for a surprise party I planned.",
-      "When your playlist hits the perfect song.",
-      "That look when you find money in old jeans.",
-      "When you step on a Lego and question existence.",
-      "When the movie ends and the cliffhanger hits hard.",
-      "When your plan was 'maybe' and it failed spectacularly.",
-      "When your pet does a thing and you're proud.",
-      "When the Wi-Fi reconnects after a long eternity.",
-      "Me: I'll only watch one more episode. Also me: season finale.",
-      "When your brain decides to glitch during a test.",
-      "When your crush replies 'k'.",
-      "When you wave at someone who wasn't waving at you.",
-      "When you find that one missing sock. Victory.",
-      "When your snack steals the show at lunch.",
-      "When autocorrect turns 'lol' into 'loaf'.",
-      "When the group chat gets chaotic and you sip tea.",
-      "That tiny moment of victory when your download finishes.",
-      "When your battery hits 1% and you cry inside.",
-      "When you're confident and then trip on nothing.",
-      "When your favorite show gets renewed—celebrate!",
-      "When it's raining and your shoes scream.",
-      "When you realize tomorrow is actually Monday.",
-      "When you remember you had homework due today.",
-      "When your brain remembers a movie quote at the worst time.",
-      "When your pet steals your seat and refuses to move.",
-      "When you fake laugh and hope nobody notices.",
-      "When the meme perfectly describes your life.",
-      "When you finally find the perfect comeback.",
-      "When your food arrives at exactly the right temperature.",
-      "When you reply to a text and forget what you said.",
-      "Me waiting for the weekend like it's a bus.",
-      "When the teacher says 'pair up' and you panic-scan the room.",
-      "That instant when you realize you left your charger.",
-      "When you open Snapchat and see the perfect selfie.",
-      "When your plan to be quiet turns into a concert.",
-      "When autocorrect does you dirty again.",
-      "When you accidentally send 'you too' to the waiter.",
-      "When your playlist hits the nostalgic song."
-    ];
-
-    const quotes = [
-      "Believe you can and you're halfway there.",
-      "Even the darkest night will end and the sun will rise.",
-      "Small steps every day lead to big changes.",
-      "Mistakes are proof you're trying.",
-      "Dream big. Start small. Act now.",
-      "You are stronger than you think.",
-      "Progress over perfection.",
-      "Keep pushing — you're closer than you think.",
-      "Be kind to yourself; growth takes time.",
-      "Your only limit is you.",
-      "Stay curious and kind.",
-      "Good vibes create good days.",
-      "Turn the page and start fresh.",
-      "Do it scared. Do it anyway.",
-      "You are capable of amazing things.",
-      "Focus on the next right step.",
-      "Make today your best practice.",
-      "Consistency beats intensity.",
-      "Celebrate tiny wins.",
-      "Fall seven times, stand up eight.",
-      "Hustle quietly. Shine loudly.",
-      "Let your courage lead the way.",
-      "Progress is the point, not perfection.",
-      "You deserve the energy you give others.",
-      "Start where you are, use what you have.",
-      "Be the reason someone smiles today.",
-      "Create more than you consume.",
-      "Your future self will thank you.",
-      "Confidence is silent. Insecurities are loud.",
-      "Keep going; your story isn't over.",
-      "Small effort every day compounds.",
-      "Choose hope over fear.",
-      "Start today, not tomorrow.",
-      "You are the author of your life.",
-      "Don't compare; create.",
-      "Kindness is limitless.",
-      "Action beats intention every time.",
-      "Find joy in the process.",
-      "Your vibe attracts your tribe.",
-      "Stay humble. Work hard. Be kind.",
-      "The best view comes after the hardest climb.",
-      "You are enough, just as you are.",
-      "Turn problems into practice.",
-      "Climb the mountain your own way.",
-      "Keep dreaming, keep doing.",
-      "Make progress your habit.",
-      "Be brave, be bold, be you."
-    ];
-
-    const extraNames = [
-      "Zypheron","Glumbix","Trillico","Fandor","Wobblex","Varkon","Mynthra","Plorix","Quizzle","Drimble",
-      "Nimblo","Zarvox","Fentura","Klypto","Vandor","Ryntex","Blorion","Squimble","Trellex","Glimthor",
-      "Xandor","Plytra","Zomble","Crivix","Fyntra","Jorvik","Lumino","Brixor","Tandor","Wexlin",
-      "Orvax","Pelorin","Syndra","Korrin","Vexley","Marvix","Trivon","Olenna","Klyra","Rendox",
-      "Selrix","Torben","Ulvra","Yorlen","Zenael","Brivon","Corvex","Daxlin","Eryth","Faldor"
-    ];
-
-    const dares = [
-      "Do 10 jumping jacks right now",
-      "Sing your favorite song in a funny voice",
-      "Balance a spoon on your nose for 10 seconds",
-      "Hop on one foot 20 times",
-      "Dance like a robot for 30 seconds",
-      "Say a tongue twister 3 times fast",
-      "Make a silly face and hold it for 5 seconds",
-      "Pretend to be a superhero for 15 seconds",
-      "Draw a mustache on a piece of paper and wear it",
-      "Make up a silly handshake",
-      "Act like a cat for 10 seconds",
-      "Spin in a circle 5 times (careful!)",
-      "Do an impression of your favorite celebrity",
-      "Touch your toes 10 times",
-      "Do a silly walk across the room",
-      "Recite the alphabet backwards",
-      "Make up a 5-second song and sing it",
-      "Pretend to drum on a table for 10 seconds",
-      "Balance a book on your head for 10 seconds",
-      "Hop like a frog 10 times",
-      "Draw a smiley face on your hand",
-      "Speak in a robot voice for 15 seconds",
-      "Do a funny dance move and show it",
-      "Say 'hello' in 5 different accents",
-      "Clap your hands 20 times",
-      "Act like a zombie for 10 seconds",
-      "Pretend to be a pirate and say 'yar!'",
-      "Make a silly face and wink at someone",
-      "Do a jumping pose and hold for a sec",
-      "Pretend to juggle invisible balls",
-      "Invent a handshake with yourself",
-      "Whisper a dramatic line loudly",
-      "Try to lick your elbow (or try and fail)",
-      "Walk like a crab for 10 seconds",
-      "Make a funny animal noise",
-      "Do 5 quick pushups or modified pushups",
-      "Pretend to be a news anchor for 10s",
-      "Name 5 countries backwards",
-      "Draw a quick comic in 30 seconds",
-      "Make a paper hat and wear it",
-      "Say a poem in a superhero voice",
-      "Try to touch your nose with your tongue (or attempt)",
-      "Mime brushing your teeth like a pro",
-      "Pretend your hand is a puppet and interview it",
-      "Show your best surprised face",
-      "Make a secret handshake move with the air",
-      "Make up a new emoji expression",
-      "Count to 20 in a silly rhythm",
-      "Act out your favorite movie scene in 10s"
-    ];
-
-    /**********************
-     * Cyclers (no repeat until all used)
-     **********************/
-    function createCycler(array){
-      let used = [];
-      return function(){
-        if(used.length === array.length) used = [];
-        let idx;
-        do { idx = Math.floor(Math.random()*array.length); } while(used.includes(idx));
-        used.push(idx);
-        return array[idx];
-      }
+function generate(type){
+  let item;
+  if(type==='excuse') item = excuses[Math.floor(Math.random()*excuses.length)];
+  else if(type==='gamer') item = gamers[Math.floor(Math.random()*gamers.length)];
+  else if(type==='dare') item = dares[Math.floor(Math.random()*dares.length)];
+  document.getElementById(type+'Output').innerText = item;
+  addPoint();
+  if(points===100){ // example milestone
+    let name = prompt("You reached 100 points! Enter your name for the leaderboard:");
+    if(name){ 
+      leaderboard.push({name:name, points:points});
+      leaderboard.sort((a,b)=>b.points-a.points);
+      leaderboard = leaderboard.slice(0,20);
+      localStorage.setItem('leaderboard',JSON.stringify(leaderboard));
+      updateLeaderboard();
     }
+  }
+}
 
-    const getExcuse = createCycler(excuses);
-    const getGamerTag = createCycler(gamerTags);
-    const getRoast = createCycler(roasts);
-    const getMeme = createCycler(memes);
-    const getQuote = createCycler(quotes);
-    const getExtraName = createCycler(extraNames);
-    const getDare = createCycler(dares);
+function setTheme(t){
+  document.body.classList.remove('dark','neon');
+  if(t!=='default') document.body.classList.add(t);
+  localStorage.setItem('theme',t);
+}
 
-    /**********************
-     * State & Persistence
-     **********************/
-    let points = parseInt(localStorage.getItem('points')) || 0;
-    let playerName = localStorage.getItem('playerName') || "";
+function toggleClickSound(){
+  clickSoundEnabled = !clickSoundEnabled;
+  localStorage.setItem('clickSound',clickSoundEnabled);
+  alert("Click Sound: "+(clickSoundEnabled?"ON":"OFF"));
+}
 
-    function savePoints(){
-      localStorage.setItem('points', String(points));
-    }
-    function savePlayerName(name){
-      playerName = name || "";
-      localStorage.setItem('playerName', playerName);
-    }
+function toggleMusic(){
+  musicEnabled = !musicEnabled;
+  localStorage.setItem('music',musicEnabled);
+  if(musicEnabled) bgMusic.play(); else bgMusic.pause();
+  alert("Music: "+(musicEnabled?"ON":"OFF"));
+}
 
-    /**********************
-     * Leaderboard (local top 20)
-     **********************/
-    function loadBoard(){
-      try{
-        return JSON.parse(localStorage.getItem('leaderboard')||'[]');
-      }catch(e){ return []; }
-    }
+function updateLeaderboard(){
+  const list = document.getElementById('leaderboardList');
+  list.innerHTML = '';
+  leaderboard.forEach(p=>{
+    const li = document.createElement('li');
+    li.textContent = `${p.name}: ${p.points}`;
+    list.appendChild(li);
+  });
+}
+</script>
 
-    function saveBoard(board){
-      localStorage.setItem('leaderboard', JSON.stringify(board));
-    }
-
-    function updateLeaderboardLocal(){
-      // adds/updates player's score in local leaderboard (keeps top 20)
-      if(!playerName) return; // nothing to save yet
-      let board = loadBoard();
-      const existing = board.find(b => b.name === playerName);
-      if(existing) existing.score = points;
-      else board.push({ name: playerName, score: points });
-      board.sort((a,b)=> b.score - a.score);
-      if(board.length > 20) board = board.slice(0,20);
-      saveBoard(board);
-      renderLeaderboard(board);
-    }
-
-    function renderLeaderboard(board){
-      const container = document.getElementById('leaderboardContent');
-      if(!Array.isArray(board)) board = [];
-      let html = "<ol>";
-      board.forEach((p, i) => {
-        const isYou = p.name === playerName;
-        html += `<li${isYou ? ' class="you"':''}>${escapeHtml(p.name)}: ${p.score}</li>`;
-      });
-      html += "</ol>";
-      container.innerHTML = html;
-
-      // show your position
-      const idx = board.findIndex(b => b.name === playerName);
-      const posEl = document.getElementById('yourPos');
-      if(idx === -1) posEl.innerText = "Your position: — (not on list)";
-      else posEl.innerText = `Your position: ${idx+1}`;
-    }
-
-    function escapeHtml(s){
-      if(!s) return "";
-      return String(s).replace(/[&<>"'`]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;','`':'&#96;'}[c]));
-    }
-
-    /**********************
-     * UI: Buttons + handlers
-     **********************/
-    function addPoint(n=1){
-      points += n;
-      document.getElementById('points').innerText = `Points: ${points}`;
-      savePoints();
-      checkUnlocks();
-      // update local leaderboard (if name set)
-      if(playerName) updateLeaderboardLocal();
-    }
-
-    function checkUnlocks(){
-      const extras = document.querySelectorAll('.generator.extra');
-      if(points >= 30) extras[0].style.display = 'block';
-      if(points >= 60) extras[1].style.display = 'block';
-      if(points >= 90) extras[2].style.display = 'block';
-      // milestone 100 -> invite to set name (only once)
-      if(points >= 100 && !localStorage.getItem('leaderboardUnlocked')){
-        localStorage.setItem('leaderboardUnlocked','true');
-        setTimeout(() => {
-          const name = prompt("You're an amazing clicker! 🎉 Enter a name for the leaderboard:") || "";
-          if(name.trim()) {
-            savePlayerName(name.trim().slice(0,30));
-            updateLeaderboardLocal();
-          }
-          // show leaderboard (already visible in UI)
-        }, 100);
-      }
-    }
-
-    // generator actions
-    function generateExcuse(){ document.getElementById('excuseOutput').innerText = getExcuse(); addPoint(1); }
-    function generateGamerTag(){ document.getElementById('gamerTagOutput').innerText = getGamerTag(); addPoint(1); }
-    function generateRoast(){ document.getElementById('roastOutput').innerText = getRoast(); addPoint(1); }
-    function generateMeme(){ document.getElementById('memeOutput').innerText = getMeme(); addPoint(1); }
-    function generateQuote(){ document.getElementById('quoteOutput').innerText = getQuote(); addPoint(1); }
-    function generateExtra(){ document.getElementById('nameOutput').innerText = getExtraName(); addPoint(1); }
-    function generateDare(){ document.getElementById('dareOutput').innerText = getDare(); addPoint(1); }
-    function generateNumber(){
-      const v = parseInt(document.getElementById('maxNumber').value);
-      const max = (isNaN(v) || v < 1) ? 100 : v;
-      const rand = Math.floor(Math.random() * max) + 1;
-      document.getElementById('numberOutput').innerText = `Random number: ${rand}`;
-      addPoint(1);
-    }
-
-    /**********************
-     * Copy buttons (delegation)
-     **********************/
-    document.addEventListener('click', function(evt){
-      const t = evt.target;
-      if(t.classList.contains('btn-copy')){
-        const id = t.getAttribute('data-target');
-        if(!id) return;
-        const text = (document.getElementById(id) && document.getElementById(id).innerText) || "";
-        if(!text) { alert("Nothing to copy yet!"); return; }
-        navigator.clipboard.writeText(text).then(()=> alert("Copied!")).catch(()=> {
-          // fallback
-          const ta = document.createElement('textarea');
-          ta.value = text; document.body.appendChild(ta); ta.select();
-          try { document.execCommand('copy'); alert('Copied!'); } catch(e){ alert('Copy failed'); }
-          ta.remove();
-        });
-      }
-    });
-
-    /**********************
-     * Attach button handlers (once)
-     **********************/
-    window.addEventListener('DOMContentLoaded', function(){
-      // set points display
-      document.getElementById('points').innerText = `Points: ${points}`;
-
-      // generator buttons
-      document.getElementById('excuseBtn').addEventListener('click', generateExcuse);
-      document.getElementById('gamerTagBtn').addEventListener('click', generateGamerTag);
-      document.getElementById('roastBtn').addEventListener('click', generateRoast);
-      document.getElementById('memeBtn').addEventListener('click', generateMeme);
-      document.getElementById('quoteBtn').addEventListener('click', generateQuote);
-
-      // extra buttons
-      document.getElementById('nameBtn').addEventListener('click', generateExtra);
-      document.getElementById('numberBtn').addEventListener('click', generateNumber);
-      document.getElementById('dareBtn').addEventListener('click', generateDare);
-
-      // leaderboard controls
-      document.getElementById('btnChangeName').addEventListener('click', function(){
-        const newName = prompt("Enter your name for the leaderboard: (max 30 chars)") || "";
-        if(newName.trim()){
-          savePlayerName(newName.trim().slice(0,30));
-          updateLeaderboardLocal();
-        } else {
-          alert("Name not changed.");
-        }
-      });
-      document.getElementById('btnResetLB').addEventListener('click', function(){
-        if(confirm("Reset local leaderboard and points? This clears local data.")){
-          localStorage.removeItem('leaderboard');
-          localStorage.removeItem('points');
-          localStorage.removeItem('playerName');
-          localStorage.removeItem('leaderboardUnlocked');
-          points = 0;
-          playerName = "";
-          document.getElementById('points').innerText = `Points: ${points}`;
-          // hide extras
-          const extras = document.querySelectorAll('.generator.extra');
-          extras.forEach(el => el.style.display='none');
-          renderLeaderboard([]);
-          alert('Reset done.');
-        }
-      });
-
-      // On load: restore leaderboard and unlocks
-      checkUnlocks();
-      const storedBoard = loadBoard();
-      renderLeaderboard(storedBoard);
-
-      // If leaderboard was previously unlocked and playerName exists, ensure board updates
-      if(localStorage.getItem('leaderboardUnlocked') && localStorage.getItem('playerName')){
-        playerName = localStorage.getItem('playerName');
-        updateLeaderboardLocal();
-      }
-    });
-
-    /**********************
-     * Accessibility: show keyboard focus
-     **********************/
-    (function(){
-      const style = document.createElement('style');
-      style.innerHTML = 'button:focus, input:focus { outline: 3px solid rgba(52,152,219,0.25); outline-offset:2px; }';
-      document.head.appendChild(style);
-    })();
-  </script>
 </body>
 </html>
